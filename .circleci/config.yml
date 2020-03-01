@@ -6,6 +6,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: ls
+          command: ls -lsa
+      - run:
           name: Compose build
           command: docker-compose build
       - run:
