@@ -12,6 +12,6 @@ jobs:
       - run:
           name: Bootstrap
           command: ./scripts/boostrap.sh
-      -run:
+      - run:
           name: Lint
           command: ./scripts/lint.sh
