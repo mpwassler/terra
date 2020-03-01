@@ -9,8 +9,11 @@ jobs:
           name: Compose build
           command: docker-compose build
       - run:
+          name: Compose up
+          command: docker-compose up -d
+      - run:
           name: Bootstrap
-          command: ./scripts/boostrap.sh
+          command: scripts/boostrap.sh
       - run:
           name: Lint
-          command: ./scripts/lint.sh
+          command: scripts/lint.sh
