@@ -6,9 +6,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: ls
-          command: ls -lsa
-      - run:
           name: Compose build
           command: docker-compose build
       - run:
@@ -16,7 +13,7 @@ jobs:
           command: docker-compose up -d
       - run:
           name: Bootstrap
-          command: scripts/boostrap.sh
+          command: scripts/bootstrap.sh
       - run:
           name: Lint
           command: scripts/lint.sh
