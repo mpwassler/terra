@@ -8,6 +8,11 @@ To prep the DB and install npm dependancies run `./scripts/bootstrap.sh`
 
 Requires a `MAPBOX_API_TOKEN` ENV variable be set. Either via export from a shell config or in a `.env` file. 
 
+
 # Linting 
 
 Run `./scripts/lint.sh` to run linters (rubocop and standardjs)
+
+# Testing
+
+Run `./scrips/spec.sh` to run the rspec tests. 

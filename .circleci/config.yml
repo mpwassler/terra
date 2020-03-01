@@ -17,3 +17,6 @@ jobs:
       - run:
           name: Lint
           command: scripts/lint.sh
+      - run:
+          name: Rspec
+          command: scripts/spec.sh
