@@ -9,14 +9,10 @@ RUN apt-get update && apt-get install -y build-essential && \
   	curl -sL https://deb.nodesource.com/setup_13.x  | bash - && \
   	apt-get -y install nodejs  && \
   	npm install -g yarn && \
-  	mkdir -p /tmp/yarn && \
   	mkdir -p /app
 # Configure the main working directory. This is the base
 # directory used in any further RUN, COPY, and ENTRYPOINT
 # commands.
-COPY package.json yarn.lock /tmp/yarn/
-RUN cd /tmp/yarn && yarn --pure-lockfile
-
 WORKDIR /app
 
 # Copy the Gemfile as well as the Gemfile.lock and install
@@ -30,7 +26,6 @@ RUN gem install bundler && bundle install --jobs 20 --retry 5
 # Copy the main application.
 COPY . ./
 
-RUN ln -s /tmp/yarn/node_modules /app/node_modules
 # The main command to run when the container starts. Also
 # tell the Rails dev server to bind to all interfaces by
 # default.
