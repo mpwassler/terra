@@ -1,0 +1,25 @@
+{
+  "name": "trails",
+  "private": true,
+  "dependencies": {
+    "@mapbox/tile-cover": "^3.0.2",
+    "@rails/actioncable": "^6.0.0-alpha",
+    "@rails/activestorage": "^6.0.0-alpha",
+    "@rails/ujs": "^6.0.0-alpha",
+    "@rails/webpacker": "4.2.2",
+    "@turf/turf": "^5.1.6",
+    "get-pixels": "^3.3.2",
+    "lodash": "^4.17.15",
+    "standard": "^14.3.1",
+    "three": "^0.113.2",
+    "turbolinks": "^5.2.0"
+  },
+  "version": "0.1.0",
+  "devDependencies": {
+    "webpack-dev-server": "^3.10.3"
+  },
+  "scripts": {
+    "lint": "standard 'app/javascript/**/*.js'",
+    "lint-fix": "standard 'app/javascript/**/*.js' --fix"
+  }
+}
