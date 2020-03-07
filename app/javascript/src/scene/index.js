@@ -3,6 +3,7 @@ import { Scene, PerspectiveCamera, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import config from '../config'
 import geometry from './geometry'
+import { GeoLine } from './geoline'
 
 // Initilaize and set up the 3d scene
 const width = window ? window.innerWidth : 1000
@@ -26,11 +27,16 @@ const setCameraTarget = (center) => {
   )
 }
 
-const setMesh = (feature) => {
-  feature.features.forEach(async (feature) => {
+const setMesh = ({ features }) => {
+  features.forEach(async (feature) => {
     const mesh = await geometry.makeMesh(feature)
     scene.add(mesh)
   })
+}
+
+const drawLine = (geojson) => {
+  const line = new GeoLine(geojson)
+  scene.add(line.toMesh())
 }
 
 const animationLoop = () => {
@@ -47,5 +53,6 @@ const start = async () => {
 export default {
   start,
   setCameraTarget,
-  setMesh
+  setMesh,
+  drawLine
 }

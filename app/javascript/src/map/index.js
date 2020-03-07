@@ -67,16 +67,21 @@ export class Map {
     }
   }
 
+  pathData (geojson) {
+    const simpleGeometry = turf.simplify(geojson, { tolerance: 0.01, highQuality: false })
+    return turf.toMercator(simpleGeometry)
+  }
+
   setViewport (geojson) {
+    const pathData = turf.toMercator(geojson)
     this.bbox = turf.bbox(geojson)
     this.area = this.tileArea()
     this.center = turf.center(this.area)
-
     const projectedFeature = this.featuresToRender()
     const cameraPoint = this.centerToVector()
-
     scene.setCameraTarget(cameraPoint)
     scene.setMesh(projectedFeature)
+    scene.drawLine(pathData)
   }
 
   centerToVector () {
