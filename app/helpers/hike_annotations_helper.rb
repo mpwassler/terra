@@ -1,0 +1,2 @@
+module HikeAnnotationsHelper
+end

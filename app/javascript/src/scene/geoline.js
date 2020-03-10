@@ -18,7 +18,7 @@ export class GeoLine {
   material () {
     return new LineBasicMaterial({
       color: 0xffff00,
-      linewidth: 20
+      linewidth: 3
     })
   }
 

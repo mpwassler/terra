@@ -32,7 +32,7 @@ class HikesController < ApplicationController
     @hike = GpxImporterService.new(hike_params[:path_file]).call
     respond_to do |format|
       if @hike.save
-        format.html { redirect_to @hike, notice: 'Hike was successfully created.' }
+        format.html { redirect_to edit_hike_path(@hike), notice: 'Hike was successfully created.' }
         format.json { render :show, status: :created, location: @hike }
       else
         format.html { render :new }
@@ -44,7 +44,7 @@ class HikesController < ApplicationController
   # PATCH/PUT /hikes/1
   # PATCH/PUT /hikes/1.json
   def update
-    respond_to do |format|
+    respond_to do |format|      
       if @hike.update(hike_params)
         format.html { redirect_to @hike, notice: 'Hike was successfully updated.' }
         format.json { render :show, status: :ok, location: @hike }

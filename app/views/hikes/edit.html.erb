@@ -1,6 +1,28 @@
 <h1>Editing Hike</h1>
 
-<%= render 'form', hike: @hike %>
+<%= form_with(model: hike, local: true) do |form| %>
+  <% if hike.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(hike.errors.count, "error") %> prohibited this hike from being saved:</h2>
+
+      <ul>
+        <% hike.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">    
+    <%= form.file_field :name %>
+  </div>
+  
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
+
 
 <%= link_to 'Show', @hike %> |
 <%= link_to 'Back', hikes_path %>
