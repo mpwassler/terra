@@ -1,28 +1,17 @@
-<h1>Editing Hike</h1>
+<script>
+  var links = {
+    show: '<%= hike_path(@hike) %>',
+    back: '<%= hikes_path %>'
+  }
+  var PATH_DATA = '<%= raw(@hike_json) %>'
+</script>
+<style>
+  .map {
+    width: 100%;
+    height:400px;
+  }
+</style>
 
-<%= form_with(model: hike, local: true) do |form| %>
-  <% if hike.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(hike.errors.count, "error") %> prohibited this hike from being saved:</h2>
+<div class="app"></div>
 
-      <ul>
-        <% hike.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="field">    
-    <%= form.file_field :name %>
-  </div>
-  
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
-<% end %>
-
-
-<%= link_to 'Show', @hike %> |
-<%= link_to 'Back', hikes_path %>
+<%= javascript_pack_tag 'hikeEdit' %>

@@ -11,12 +11,25 @@
     </div>
   <% end %>
 
-  <div class="field">    
-    <%= form.file_field :path_file %>
+  <div class="field">
+    <div class="file">
+      <label class="file-label">        
+        <%= form.file_field :path_file, class: 'file-input' %>
+        <span class="file-cta">
+          <span class="file-icon">
+            <i class="fas fa-upload"></i>
+          </span>
+          <span class="file-label">
+            Choose a file…
+          </span>
+        </span>
+      </label>
+    </div>    
+    
   </div>
   
 
   <div class="actions">
-    <%= form.submit %>
+    <%= form.submit class: 'button' %>
   </div>
 <% end %>

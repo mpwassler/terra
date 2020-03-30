@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_20_021156) do
+ActiveRecord::Schema.define(version: 2020_03_10_000655) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
+
+  create_table "hike_annotations", force: :cascade do |t|
+    t.geometry "point", limit: {:srid=>0, :type=>"st_point"}
+    t.string "copy"
+    t.bigint "hike_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["hike_id"], name: "index_hike_annotations_on_hike_id"
+  end
 
   create_table "hikes", force: :cascade do |t|
     t.string "name"
@@ -25,11 +35,12 @@ ActiveRecord::Schema.define(version: 2020_02_20_021156) do
 
   create_table "recordings", force: :cascade do |t|
     t.bigint "hike_id", null: false
-    t.geography "path", limit: { :srid => 4326, :type => "geometry", :has_z => true, :geographic => true }
+    t.geography "path", limit: {:srid=>4326, :type=>"geometry", :has_z=>true, :geographic=>true}
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["hike_id"], name: "index_recordings_on_hike_id"
   end
 
+  add_foreign_key "hike_annotations", "hikes"
   add_foreign_key "recordings", "hikes"
 end

@@ -2,7 +2,7 @@
 
 <h1>Hikes</h1>
 
-<table>
+<table class="table is-fullwidth">
   <thead>
     <tr>
       <th>Name</th>
@@ -18,9 +18,9 @@
         <td><%= hike.name %></td>
         <td><%= hike.distance %></td>
         <td><%= hike.vertical_gain %></td>
-        <td><%= link_to 'Show', hike %></td>
-        <td><%= link_to 'Edit', edit_hike_path(hike) %></td>
-        <td><%= link_to 'Destroy', hike, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', hike, class: 'button' %></td>
+        <td><%= link_to 'Edit', edit_hike_path(hike), class: 'button' %></td>
+        <td><%= link_to 'Destroy', hike, method: :delete, data: { confirm: 'Are you sure?' }, class: 'button' %></td>
       </tr>
     <% end %>
   </tbody>
@@ -28,4 +28,4 @@
 
 <br>
 
-<%= link_to 'New Hike', new_hike_path %>
+<%= link_to 'New Hike', new_hike_path, class: 'button' %>
