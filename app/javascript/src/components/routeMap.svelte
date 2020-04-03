@@ -19,10 +19,14 @@
   import MousePosition from 'ol/control/MousePosition'
   import {createStringXY} from 'ol/coordinate'
 
-  import {pointToEdit} from '../stores/hikeEditStore'
+  import MouseOverLayer from '../openlayer/layers/mouseOverLayer'
+
+  import { pointToEdit, hike } from '../stores/hikeEditStore'
 
   let container
   let map
+
+
 
   const circleFactory = ({line, fill, center}) => {
     return new VectorLayer({
@@ -65,13 +69,11 @@
     undefinedHTML: '&nbsp;'
   })
 
-  const getData = () => JSON.parse(window.PATH_DATA)
-
   const getLineStart = (feature) => first(feature.coordinates)
 
   const getLineEnd = (feature) => last(feature.coordinates)
 
-  const linestring = getData().path
+  const linestring = $hike.path
   const center = turf.center(linestring)
 
   const linestring2d = turf.lineString(linestring.coordinates.map(([lon, lat]) => [lon, lat]))
@@ -95,31 +97,41 @@
         })
       }
     })
+  const mouseOver = new MouseOverLayer(linestring)
 
+  const annotationsSource = new VectorSource()
+  const annotationsLayer = new VectorLayer({
+      source: annotationsSource,
+      style: () => {
+        return new Style({
+          stroke: new Stroke({
+            color: 'green',
+            width: 2
+          }),
+          fill: new Fill({
+            color: 'rgba(0,255,0,0.8)'
+          })
+        })
+      }
+    })
 
-  const handleMouseMove = (evt) => {       
-    var pt = turf.point(evt.coordinate)  	    
-	var snapped = turf.nearestPointOnLine(linestring, pt, {units: 'miles'})	
-	let [feature] = addedPointSource.getFeatures()
-	if (!feature) {
-    	const rolloverFeature = new Feature({
-    		geometry: new Circle(snapped.geometry.coordinates, 0.001),
-    		name: 'hover'
-    	})  	    	
-    	addedPointSource.addFeature(rolloverFeature)  	    		
-	} else {
-		feature.setGeometry(new Circle(snapped.geometry.coordinates, 0.001))  	    		
-	}
-  }
-
-  const handleMouseDelayed = throttle(handleMouseMove, 100)
 
   const handleClick = (evt) => {
   	var pt = turf.point(evt.coordinate)  	    
-	var snapped = turf.nearestPointOnLine(linestring, pt, {units: 'miles'})
-	pointToEdit.set(snapped)
-  	debugger
+	  var snapped = turf.nearestPointOnLine(linestring, pt, {units: 'miles'})
+    var clickPoint = turf.point(linestring.coordinates[snapped.properties.index])
+	  pointToEdit.set({geojson: clickPoint})
+  	
   }
+
+  const unsubscribe = hike.subscribe((hike) => {
+    annotationsSource.clear()
+    hike.hike_annotations.forEach(annotation => {
+      annotationsSource.addFeature( new Feature({
+        geometry: new Circle(annotation.point.coordinates, 0.001)
+      }))
+    })
+  })
  
 
   onMount(() => {
@@ -135,7 +147,8 @@
   	    lineFactory({ linestring }),
   	    circleFactory({line: 'green', fill: 'rgba(0,255,0,0.8)', center: start}),
   	    circleFactory({line: 'red', fill: 'rgba(255,0,0,0.25)', center: end}),
-  	    addedPointLayer
+        annotationsLayer,
+  	    mouseOver.layer
   	  ],
   	  view: new View({
   	    projection: 'EPSG:4326',
@@ -143,8 +156,10 @@
   	    zoom: 14
   	  })
   	})
-  	map.on('pointermove', handleMouseDelayed)
+  	map.on('pointermove', mouseOver.handleMouseOver())
   	map.on('click', handleClick)
+
+
   })
 
 </script>
@@ -154,24 +169,7 @@
 </style>
 
 <div class="map" bind:this={container}>
-	{#if $pointToEdit}
-		<div class="modal is-active">
-		  <div class="modal-background"></div>
-		  <div class="modal-card">
-		    <header class="modal-card-head">
-		      <p class="modal-card-title">Modal title</p>
-		      <button class="delete" aria-label="close"></button>
-		    </header>
-		    <section class="modal-card-body">
-		      <!-- Content ... -->
-		    </section>
-		    <footer class="modal-card-foot">
-		      <button class="button is-success">Save changes</button>
-		      <button class="button">Cancel</button>
-		    </footer>
-		  </div>
-		</div>
-	{/if}
+	
 	{#if map}
 		<slot></slot>
 	{/if}

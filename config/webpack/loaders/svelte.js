@@ -3,7 +3,8 @@ module.exports = {
   use: [{
     loader: 'svelte-loader',
     options: {
-      hotReload: true
+      hotReload: true,
+      dev: true,
     }
   }],
 }

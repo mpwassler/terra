@@ -29,6 +29,11 @@ gem 'pry-rails'
 gem 'rgeo-geojson'
 
 gem 'activerecord-postgis-adapter'
+
+gem 'blueprinter'
+
+gem 'oj'
+
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 

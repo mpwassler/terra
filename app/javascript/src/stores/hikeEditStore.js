@@ -1,7 +1,8 @@
-import { writable } from 'svelte/store'
+import { writable, readable } from 'svelte/store'
 import * as turf from '@turf/turf'
 
-export const hike = writable(JSON.parse(window.PATH_DATA))
+const hikeData = window.PATH_DATA
+export const hike = writable(hikeData)
 
 export const modalOpen = writable(false)
 

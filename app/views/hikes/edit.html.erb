@@ -1,9 +1,10 @@
 <script>
   var links = {
     show: '<%= hike_path(@hike) %>',
-    back: '<%= hikes_path %>'
+    back: '<%= hikes_path %>',
+    hikeAnnotationsPath: '<%= hike_annotations_path %>'
   }
-  var PATH_DATA = '<%= raw(@hike_json) %>'
+  var PATH_DATA = JSON.parse('<%= raw(@hike_json) %>')
 </script>
 <style>
   .map {

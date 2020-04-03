@@ -68,11 +68,11 @@ class HikesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_hike
-      @hike = Hike.includes(:recordings).find(params[:id])
+      @hike = Hike.includes(:recordings, :hike_annotations).find(params[:id])
     end
 
-    def set_hike_json
-      @hike_json = HikeSerializer.new(@hike).to_json
+    def set_hike_json      
+      @hike_json = HikeSerializer.render(@hike)
     end
 
     # Only allow a list of trusted parameters through.

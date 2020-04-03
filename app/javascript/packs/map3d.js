@@ -5,9 +5,9 @@ const getData = () => {
 }
 
 const main = () => {
-  const { path } = getData()
+  const data = getData()
   const map = new Map()
-  map.setViewport(path)
+  map.setViewport(data.path)
   map.render()
 }
 
