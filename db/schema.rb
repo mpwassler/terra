@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_10_000655) do
+ActiveRecord::Schema.define(version: 2020_04_04_161944) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,15 @@ ActiveRecord::Schema.define(version: 2020_03_10_000655) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "media", force: :cascade do |t|
+    t.string "path"
+    t.bigint "hike_annotation_id", null: false
+    t.string "type"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["hike_annotation_id"], name: "index_media_on_hike_annotation_id"
+  end
+
   create_table "recordings", force: :cascade do |t|
     t.bigint "hike_id", null: false
     t.geography "path", limit: {:srid=>4326, :type=>"geometry", :has_z=>true, :geographic=>true}
@@ -42,5 +51,6 @@ ActiveRecord::Schema.define(version: 2020_03_10_000655) do
   end
 
   add_foreign_key "hike_annotations", "hikes"
+  add_foreign_key "media", "hike_annotations"
   add_foreign_key "recordings", "hikes"
 end

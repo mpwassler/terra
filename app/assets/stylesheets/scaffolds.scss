@@ -75,3 +75,19 @@ div {
 label {
   display: block;
 }
+
+body {
+  background: #eaeaea;
+  min-height: 100vh;
+}
+
+.autocomplete {
+  background: #fff;
+  > div {
+    padding: 2% 1%;
+  }
+}
+
+.selected {
+ background: #efefef; 
+}

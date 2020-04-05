@@ -4,6 +4,7 @@
     <title>Trails</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
       var API_TOKEN = "<%= ENV['MAPBOX_API_TOKEN'] %>"
     </script>
@@ -13,6 +14,43 @@
   </head>
 
   <body>
+    <nav class="navbar is-transparent">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="https://bulma.io">
+          
+        </a>
+        <div class="navbar-burger burger" data-target="navbarExampleTransparentExample">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      <div id="navbarExampleTransparentExample" class="navbar-menu">
+        <div class="navbar-start">          
+          
+        </div>
+
+        <div class="navbar-end">
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link" href="https://bulma.io/documentation/overview/start/">
+              Account
+            </a>
+            <div class="navbar-dropdown is-boxed">
+              <%= link_to 'My Hikes', hikes_path, class: 'navbar-item' %>
+              
+            </div>
+          </div>
+          <div class="navbar-item">
+            <div class="field is-grouped">
+              <p class="control">
+                <%= link_to 'New Hike', new_hike_path, class: 'button' %>
+              </p>              
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
     <section class="section">
       <div class="container">
         <%= yield %>      

@@ -20,6 +20,7 @@
   import {createStringXY} from 'ol/coordinate'
 
   import MouseOverLayer from '../openlayer/layers/mouseOverLayer'
+  import AnnotationsLayer from '../openlayer/layers/AnnotationsLayer'
 
   import { pointToEdit, hike } from '../stores/hikeEditStore'
 
@@ -68,52 +69,19 @@
     projection: 'EPSG:4326',
     undefinedHTML: '&nbsp;'
   })
-
-  const getLineStart = (feature) => first(feature.coordinates)
-
-  const getLineEnd = (feature) => last(feature.coordinates)
-
+  
   const linestring = $hike.path
   const center = turf.center(linestring)
 
   const linestring2d = turf.lineString(linestring.coordinates.map(([lon, lat]) => [lon, lat]))
   console.log(linestring2d.geometry.coordinates[0])
 
-  const start = getLineStart(linestring)
-  const end   = getLineEnd(linestring)
+  const start = first(linestring.coordinates)
+  const end   = last(linestring.coordinates)
 
-  const addedPointSource = new VectorSource()
-  const addedPointLayer = new VectorLayer({
-      source: addedPointSource,
-      style: () => {
-        return new Style({
-          stroke: new Stroke({
-            color: 'green',
-            width: 2
-          }),
-          fill: new Fill({
-            color: 'rgba(0,255,0,0.8)'
-          })
-        })
-      }
-    })
+  
   const mouseOver = new MouseOverLayer(linestring)
-
-  const annotationsSource = new VectorSource()
-  const annotationsLayer = new VectorLayer({
-      source: annotationsSource,
-      style: () => {
-        return new Style({
-          stroke: new Stroke({
-            color: 'green',
-            width: 2
-          }),
-          fill: new Fill({
-            color: 'rgba(0,255,0,0.8)'
-          })
-        })
-      }
-    })
+  const annotations = new AnnotationsLayer()
 
 
   const handleClick = (evt) => {
@@ -125,12 +93,7 @@
   }
 
   const unsubscribe = hike.subscribe((hike) => {
-    annotationsSource.clear()
-    hike.hike_annotations.forEach(annotation => {
-      annotationsSource.addFeature( new Feature({
-        geometry: new Circle(annotation.point.coordinates, 0.001)
-      }))
-    })
+    annotations.drawPoints(hike.hike_annotations)    
   })
  
 
@@ -147,13 +110,13 @@
   	    lineFactory({ linestring }),
   	    circleFactory({line: 'green', fill: 'rgba(0,255,0,0.8)', center: start}),
   	    circleFactory({line: 'red', fill: 'rgba(255,0,0,0.25)', center: end}),
-        annotationsLayer,
-  	    mouseOver.layer
+  	    mouseOver.layer,
+        annotations.layer
   	  ],
   	  view: new View({
   	    projection: 'EPSG:4326',
   	    center: center.geometry.coordinates,
-  	    zoom: 14
+  	    zoom: 13.5
   	  })
   	})
   	map.on('pointermove', mouseOver.handleMouseOver())
@@ -167,8 +130,9 @@
 <style>
   
 </style>
-
-<div class="map" bind:this={container}>
+<div class="box">
+  <div class="map" bind:this={container}>  
+</div>
 	
 	{#if map}
 		<slot></slot>

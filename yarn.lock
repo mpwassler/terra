@@ -2453,6 +2453,11 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
+autocompleter@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/autocompleter/-/autocompleter-6.0.2.tgz#a0ee4e5ccb1de5cbb457279fa6f6648b5e5084d7"
+  integrity sha512-euXlT7i61H1Jd43kEA9Sq2M5pX8jl0Pxy5yEwxp79Jz00DejveE58ca/hF9jGS6l9FZIeA2yTKVK/gDKHNLDOA==
+
 autoprefixer@^9.6.1:
   version "9.7.4"
   resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-9.7.4.tgz#f8bf3e06707d047f0641d87aee8cfb174b2a5378"
@@ -8855,6 +8860,11 @@ supports-color@^7.0.0:
   integrity sha512-oRSIpR8pxT1Wr2FquTNnGet79b3BWljqOuoW/h4oBhxJ/HUbX5nX6JSruTkvXDCFMwDPvsaTTbvMLKZWSy0R5g==
   dependencies:
     has-flag "^4.0.0"
+
+svelte-autocomplete@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/svelte-autocomplete/-/svelte-autocomplete-0.0.4.tgz#f515a58bb2b2b233dd7ed51f63578bef99061dd3"
+  integrity sha512-XM5Qe+9XO4MwQsjDSPfW7KQwoF9kz+tHalmU4NpSXEaxhnm1FhBaeCa2Gd893Gc1FMIonP5JHTSG3Uhvz9mT1Q==
 
 svelte-dev-helper@^1.1.9:
   version "1.1.9"
