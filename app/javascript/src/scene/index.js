@@ -73,12 +73,9 @@ const height = window ? window.innerHeight : 1000
 const scene = new Scene()
 const camera = new PerspectiveCamera(75, width / height, 0.1, config.VIEW_RANGE)
 const renderer = new WebGLRenderer()
-
 camera.up.set(0, 0, 1)
 const controls = new OrbitControls(camera, renderer.domElement)
-renderer.setSize(width, height)
-if (document.body) document.body.appendChild(renderer.domElement)
-controls.update()
+
 
 
 document.addEventListener('turbolinks:before-render', () => {
@@ -87,6 +84,12 @@ document.addEventListener('turbolinks:before-render', () => {
   }
 })
 
+const initilaize = () => {
+  renderer.setSize(width, height)
+  if (document.querySelector('.map3d')) document.querySelector('.map3d').appendChild(renderer.domElement)
+  controls.update()
+
+}
 
 const setCameraTarget = (center) => {
   
@@ -129,5 +132,6 @@ export default {
   start,
   setCameraTarget,
   setMesh,
-  drawLine
+  drawLine,
+  initilaize
 }

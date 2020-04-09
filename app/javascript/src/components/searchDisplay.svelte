@@ -17,7 +17,7 @@
 			      Distance: {result.distance}
 			      <br>
 			      Vertical gain: {result.vertical_gain}
-			      <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+			      <a href="{result.link}" class="button">View</a>
 			    </div>
 			  </div>
 			</div>

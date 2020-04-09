@@ -1,10 +1,12 @@
 <script>
 	import Geocoder from './geocoder.svelte'
 	import SearchDisplay from './searchDisplay.svelte'
+	import SearchMap from './searchMap.svelte'
 	import { findFeatures } from '../services/search'
-	import { results, resultsRequest } from '../stores/searchStore'
+	import { results, resultsRequest, searchPoint } from '../stores/searchStore'
 	
 	const updateSearch = async ({ detail: { value: point }}) => {
+		$searchPoint = point.coordinates
 		$results = await findFeatures({ point })
 	}
 
@@ -42,10 +44,12 @@
 
 
 <div class="columns">
-  <div class="column">
-  	<div class="box"></div>
+  <div class="column">  	
+	<SearchDisplay></SearchDisplay>  	
   </div>
   <div class="column is-8">
-	<SearchDisplay></SearchDisplay>  	
+  	{#if $searchPoint}
+  		<SearchMap></SearchMap>
+  	{/if}
   </div>
 </div>

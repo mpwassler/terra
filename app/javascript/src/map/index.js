@@ -73,6 +73,7 @@ export class Map {
   }
 
   setViewport (geojson) {
+    scene.initilaize()
     var buffered = turf.buffer(turf.center(geojson), 5, {units: 'miles'})
     this.bbox = turf.bbox(buffered)
     this.area = this.tileArea()

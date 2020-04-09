@@ -1,9 +1,12 @@
 <p id="notice"><%= notice %></p>
 
 <script>
-	var PATH_DATA = '<%= raw(@hike_json) %>'
+	var PATH_DATA = JSON.parse('<%= raw(@hike_json) %>')
 </script>
 
+<div class="box map map3d">
+	
+</div>
 
 <%= link_to 'Edit', edit_hike_path(@hike) %> |
 <%= link_to 'Back', hikes_path %>
