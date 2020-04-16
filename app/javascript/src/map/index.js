@@ -2,6 +2,8 @@ import scene from '../scene'
 import * as turf from '@turf/turf'
 import * as cover from '@mapbox/tile-cover'
 import { Vector3 } from 'three'
+import {Object3D, Sprite, SpriteMaterial, TextureLoader} from 'three'
+import Marker from '../scene/marker'
 
 import config from '../config'
 
@@ -21,11 +23,12 @@ const limits = {
 }
 
 export class Map {
-  constructor () {
+  constructor (opts) {
     this.path = null // LatLon linestring
     this.bbox = null // LatLon boundingbox
     this.area = null // LatLon tile coverage
     this.center = null // LatLon center point
+    this.element = opts.element
   }
 
   render (geojson) {
@@ -73,7 +76,7 @@ export class Map {
   }
 
   setViewport (geojson) {
-    scene.initilaize()
+    scene.initilaize(this.element)
     var buffered = turf.buffer(turf.center(geojson), 5, {units: 'miles'})
     this.bbox = turf.bbox(buffered)
     this.area = this.tileArea()
@@ -82,18 +85,35 @@ export class Map {
     const pathData = turf.toMercator(geojson)
     const projectedFeature = this.featuresToRender()
     const cameraPoint = this.centerToVector()
+
     scene.setCameraTarget(cameraPoint)
     scene.setMesh(projectedFeature)
     scene.drawLine(pathData)
   }
 
+  addMarker (point) {
+    let position = this.pointToVector(point)
+    const marker = new Marker(position)    
+    
+    scene.add(marker.sprite)
+    
+  }
+
+  focusOn (point) {
+    scene.lookAt(this.pointToVector(point))
+  }
+
+  pointToVector (point) {
+    const projectedPoint = turf.toMercator(point)
+    return new Vector3(
+      projectedPoint.coordinates[0],
+      projectedPoint.coordinates[1],
+      projectedPoint.coordinates[2] + 75
+    )
+  }
+
   centerToVector () {
     const projectedCenter = turf.toMercator(this.center)
-    // return new Vector3(
-    //   0,
-    //   0,
-    //   0
-    // )
     return new Vector3(
       projectedCenter.geometry.coordinates[0],
       projectedCenter.geometry.coordinates[1],

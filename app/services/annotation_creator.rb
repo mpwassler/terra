@@ -1,6 +1,12 @@
 class AnnotationCreator  
   def initialize(params)
     @params = params
+    @decoder = RGeo::GeoJSON::Coder.new geo_factory: geo_facotry
+  end
+
+  def geo_facotry
+    RGeo::Geographic.spherical_factory has_z_coordinate: true,
+                                                  srid: 4326
   end
 
   def call
@@ -13,6 +19,6 @@ class AnnotationCreator
 
   private
     def parse_point geojson
-      RGeo::GeoJSON.decode(geojson).geometry
+      @decoder.decode(geojson).geometry
     end
 end

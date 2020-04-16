@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(version: 2020_04_04_161944) do
   enable_extension "postgis"
 
   create_table "hike_annotations", force: :cascade do |t|
-    t.geometry "point", limit: {:srid=>0, :type=>"st_point"}
+    t.geography "point", limit: {:srid=>4326, :type=>"st_point", :has_z=>true, :geographic=>true}
     t.string "copy"
     t.bigint "hike_id", null: false
     t.datetime "created_at", precision: 6, null: false

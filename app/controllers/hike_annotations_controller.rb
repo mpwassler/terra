@@ -1,7 +1,8 @@
 class HikeAnnotationsController < ApplicationController
 
   def create
-    @hike_annotation = AnnotationCreator.new(params).call    
+    @hike_annotation = AnnotationCreator.new(params).call   
+    puts @hike_annotation
     if @hike_annotation.save        
         render json: hike_annotation_json, status: :created, location: @hike_annotation
     else

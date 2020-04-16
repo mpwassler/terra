@@ -12,7 +12,14 @@ class GpxParser
   end
 
   def parse
-    track_points = @hash_data["gpx"]["trk"]["trkseg"]["trkpt"]
+    track_segments = @hash_data["gpx"]["trk"]["trkseg"]
+    track_points = []
+    if track_segments.kind_of?(Array)      
+      track_points = track_segments.first["trkpt"]
+    else
+      track_points = track_segments["trkpt"]
+    end
+    
     @exporter.new(track_points).export
   rescue StandardError
     raise GpxParseError

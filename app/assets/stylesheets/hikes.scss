@@ -2,3 +2,14 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 canvas { max-width: 100%; }
+
+.carousel-cell {
+	width: 67%;
+	padding: 5%;
+	margin: 0 1%;
+	opacity: 0.6;
+}
+
+.carousel-cell.is-selected {
+	opacity: 1;	
+}

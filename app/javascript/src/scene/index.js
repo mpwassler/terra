@@ -8,6 +8,8 @@ import config from '../config'
 import geometry from './geometry'
 import { GeoLine } from './geoline'
 
+import gsap from 'gsap'
+
 const configureSun = (center) => {
   const sky = new Sky()
   sky.scale.setScalar( 30000 )
@@ -52,16 +54,6 @@ const configureSun = (center) => {
     renderer.render( scene, camera );
 
   }
-
-  var gui = new GUI();
-
-  gui.add( effectController, "turbidity", 1.0, 20.0, 0.1 ).onChange( guiChanged );
-  gui.add( effectController, "rayleigh", 0.0, 4, 0.001 ).onChange( guiChanged );
-  gui.add( effectController, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( guiChanged );
-  gui.add( effectController, "mieDirectionalG", 0.0, 1, 0.001 ).onChange( guiChanged );
-  gui.add( effectController, "luminance", 0.0, 2 ).onChange( guiChanged );
-  gui.add( effectController, "inclination", 0, 1, 0.0001 ).onChange( guiChanged );
-  gui.add( effectController, "azimuth", 0, 1, 0.0001 ).onChange( guiChanged );
   
   guiChanged()
   // 
@@ -69,7 +61,7 @@ const configureSun = (center) => {
 
 // Initilaize and set up the 3d scene
 const width = window ? window.innerWidth : 1000
-const height = window ? window.innerHeight : 1000
+const height = window ? window.innerHeight * 0.75 : 1000
 const scene = new Scene()
 const camera = new PerspectiveCamera(75, width / height, 0.1, config.VIEW_RANGE)
 const renderer = new WebGLRenderer()
@@ -84,9 +76,9 @@ document.addEventListener('turbolinks:before-render', () => {
   }
 })
 
-const initilaize = () => {
+const initilaize = (element) => {
   renderer.setSize(width, height)
-  if (document.querySelector('.map3d')) document.querySelector('.map3d').appendChild(renderer.domElement)
+  if (element) element.appendChild(renderer.domElement)
   controls.update()
 
 }
@@ -99,8 +91,8 @@ const setCameraTarget = (center) => {
   controls.update()
   camera.position.set(
     controls.target.x,
-    controls.target.y,
-    6000
+    controls.target.y - 2000,
+    7000
   )
 
 }
@@ -128,10 +120,30 @@ const start = async () => {
   animationLoop()
 }
 
+const add = (obj) => {
+  scene.add(obj)
+}
+
+const lookAt = ({x,y,z}) => {
+  const animationSettings = {
+    ease: "power3.out",
+    duration: 1
+  }
+  gsap.to(camera.position, { 
+    ...animationSettings,
+    x, 
+    y: (y + 500) - 600, 
+    z: (z + 2500) - 600 
+  })
+  gsap.to(controls.target, { ...animationSettings, x: x - 600, y: y - 600, z })
+}
+
 export default {
   start,
   setCameraTarget,
   setMesh,
   drawLine,
-  initilaize
+  initilaize,
+  add,
+  lookAt
 }

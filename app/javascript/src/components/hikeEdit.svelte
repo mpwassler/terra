@@ -9,6 +9,7 @@
   let hikeAnnotationResponse
 
   const saveHikeAnnotation = () => {  
+  	debugger
   	hikeAnnotationResponse = post( window.links.hikeAnnotationsPath, {
   		...$pointToEdit, 
   		hike_id: $hike.id
