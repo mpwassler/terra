@@ -2,11 +2,11 @@ class HikeAnnotationSerializer < Blueprinter::Base
   identifier :id
   fields :copy, :point
 
-  def self.thumbnail blob
+  def self.thumbnail(blob)
   	if blob.variable?
-	  	variant = blob.variant resize: '250x250^', 
-	  	                       extent: '250x250', 
-	  	                       gravity: 'Center'	  	
+	  	variant = blob.variant resize: '250x250^',
+	  	                       extent: '250x250',
+	  	                       gravity: 'Center'
 	  	Rails.application.routes.url_helpers.url_for variant
   	end
   end
@@ -22,7 +22,7 @@ class HikeAnnotationSerializer < Blueprinter::Base
       			filename: "#{blob.filename}",
       			content_type: blob.content_type,
       			thumbnail_path: self.thumbnail(blob)
-      		}      		
+      		}
         end
       end
   end

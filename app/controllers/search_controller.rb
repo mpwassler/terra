@@ -8,11 +8,10 @@ class SearchController < ApplicationController
   end
 
   private
-
     def search_results
       GeoproximityQuery.new(params)
                        .all
-                       .includes :hike_annotations, 
+                       .includes :hike_annotations,
                                  :recordings
     end
 

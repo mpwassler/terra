@@ -4,6 +4,6 @@ class HikeAnnotation < ApplicationRecord
   has_many_attached :images
 
   def point
-  	RGeo::GeoJSON.encode(self[:point])
+    RGeo::GeoJSON.encode(self[:point])
   end
 end

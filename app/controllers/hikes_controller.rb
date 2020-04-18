@@ -1,7 +1,7 @@
 class HikesController < ApplicationController
   before_action :set_hike, only: [:show, :edit, :update, :destroy]
   before_action :set_hike_json, only: [:show, :edit]
-  
+
   # GET /hikes
   # GET /hikes.json
   def index
@@ -10,7 +10,7 @@ class HikesController < ApplicationController
 
   # GET /hikes/1
   # GET /hikes/1.json
-  def show    
+  def show
     respond_to do |format|
       format.html { render :show }
       format.json { render json: @hike_json }
@@ -44,7 +44,7 @@ class HikesController < ApplicationController
   # PATCH/PUT /hikes/1
   # PATCH/PUT /hikes/1.json
   def update
-    respond_to do |format|     
+    respond_to do |format|
       if @hike.update(hike_params)
         format.html { redirect_to @hike, notice: 'Hike was successfully updated.' }
         format.json { render :show, status: :ok, location: @hike }
@@ -68,11 +68,13 @@ class HikesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_hike
-      @hike = Hike.includes(:recordings, hike_annotations: [{images_attachments: :blob}]).find(params[:id])
+      @hike = Hike.includes(:recordings,
+                            hike_annotations: [{ images_attachments: :blob }])
+                  .find(params[:id])
     end
 
-    def set_hike_json      
-      @hike_json = HikeSerializer.render(@hike)      
+    def set_hike_json
+      @hike_json = HikeSerializer.render(@hike)
     end
 
     # Only allow a list of trusted parameters through.

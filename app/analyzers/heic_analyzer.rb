@@ -4,7 +4,7 @@ class HeicAnalyzer < ActiveStorage::Analyzer
   end
 
   def metadata
-  	Media::Conversions::HeicToJpeg.new(blob).call
-  	{}
+    Media::Conversions::HeicToJpeg.new(blob).call
+    {}
   end
 end
