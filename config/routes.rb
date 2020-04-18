@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  resources :hike_annotations
+  resources :hike_annotations do 
+  	post 'images', to: 'hike_annotations#add_images'
+  end
   resources :hikes
   resources :search, :controller => :search
 

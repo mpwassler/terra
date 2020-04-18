@@ -21,6 +21,19 @@ services:
       - DATABASE_PASSWORD=trails
       - MAPBOX_API_TOKEN=${MAPBOX_API_TOKEN}
       - WEBPACKER_DEV_SERVER_HOST=webpacker
+      - REDIS_PATH=redis://redis:6379/0
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq -q default -q mailers -q active_storage_analysis
+    volumes:
+      - '.:/app'
+      - /app/tmp
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_USER=trails
+      - DATABASE_PASSWORD=trails
+      - MAPBOX_API_TOKEN=${MAPBOX_API_TOKEN}
+      - REDIS_PATH=redis://redis:6379/0
   webpacker:
     build: .
     command: ./bin/webpack-dev-server
@@ -48,10 +61,8 @@ services:
     restart: on-failure
     healthcheck:
       test: "exit 0"
-
-
   redis:
-    image: redis:2.8
+    image: redis:5.0
     ports:
       - '6379:6379'
 volumes:

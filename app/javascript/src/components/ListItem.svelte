@@ -1,8 +1,18 @@
 <script>
+  import FileUpload from './fileUpload.svelte'
+  import { upload } from '../services/request'
   export let annotation
+
+  const saveImages = async ({detail: { files }}) => {
+    let response = await upload(`/hike_annotations/${annotation.id}/images`, files)
+    
+  }
+
 </script>
 <style>
-  
+  .image {
+    margin: 10px;
+  }
 </style>
 <div class="box">
   <article class="media">
@@ -29,7 +39,14 @@
       </nav>
     </div>
     <div class="media-right">
-      
+      <FileUpload on:uploaded={saveImages}></FileUpload>
     </div>
   </article>
 </div>
+{#if annotation.images}
+  {#each annotation.images as image}
+    <div class=" image box is-inline-block">
+      <img src="{image.thumbnail_path}" width="125">
+    </div>
+  {/each}
+{/if}

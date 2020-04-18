@@ -44,7 +44,7 @@ class HikesController < ApplicationController
   # PATCH/PUT /hikes/1
   # PATCH/PUT /hikes/1.json
   def update
-    respond_to do |format|      
+    respond_to do |format|     
       if @hike.update(hike_params)
         format.html { redirect_to @hike, notice: 'Hike was successfully updated.' }
         format.json { render :show, status: :ok, location: @hike }
@@ -68,11 +68,11 @@ class HikesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_hike
-      @hike = Hike.includes(:recordings, :hike_annotations).find(params[:id])
+      @hike = Hike.includes(:recordings, hike_annotations: [{images_attachments: :blob}]).find(params[:id])
     end
 
     def set_hike_json      
-      @hike_json = HikeSerializer.render(@hike)
+      @hike_json = HikeSerializer.render(@hike)      
     end
 
     # Only allow a list of trusted parameters through.
