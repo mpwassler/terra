@@ -9,15 +9,15 @@ import App from '../components/hikeShow.svelte'
 
 const setup = () => {
   const element = document.querySelector('.map3d')
-  if(document.querySelector('.map3d')) {
-	  const app = new App({
-	    target: element,
-	    props: {
-	      name: 'Svelte'
-	    }
-	  });
+  if (document.querySelector('.map3d')) {
+    const app = new App({
+      target: element,
+      props: {
+        name: 'Svelte'
+      }
+    })
 
-	  window.app = app
+    window.app = app
   }
 }
 

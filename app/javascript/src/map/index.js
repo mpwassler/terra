@@ -2,7 +2,7 @@ import scene from '../scene'
 import * as turf from '@turf/turf'
 import * as cover from '@mapbox/tile-cover'
 import { Vector3 } from 'three'
-import {Object3D, Sprite, SpriteMaterial, TextureLoader} from 'three'
+
 import Marker from '../scene/marker'
 
 import config from '../config'
@@ -77,7 +77,7 @@ export class Map {
 
   setViewport (geojson) {
     scene.initilaize(this.element)
-    var buffered = turf.buffer(turf.center(geojson), 5, {units: 'miles'})
+    var buffered = turf.buffer(turf.center(geojson), 5, { units: 'miles' })
     this.bbox = turf.bbox(buffered)
     this.area = this.tileArea()
     this.center = turf.center(this.area)
@@ -92,11 +92,10 @@ export class Map {
   }
 
   addMarker (point) {
-    let position = this.pointToVector(point)
-    const marker = new Marker(position)    
-    
+    const position = this.pointToVector(point)
+    const marker = new Marker(position)
+
     scene.add(marker.sprite)
-    
   }
 
   focusOn (point) {

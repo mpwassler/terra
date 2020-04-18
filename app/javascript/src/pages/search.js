@@ -9,15 +9,15 @@ import Search from '../components/search.svelte'
 
 const setup = () => {
   const element = document.querySelector('.search')
-  if(element) {
-	  const search = new Search({
-	    target: element,
-	    props: {
-	      name: 'Svelte'
-	    }
-	  });
+  if (element) {
+    const search = new Search({
+      target: element,
+      props: {
+        name: 'Svelte'
+      }
+    })
 
-	  window.search = search
+    window.search = search
   }
 }
 

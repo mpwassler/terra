@@ -1,24 +1,19 @@
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
-import Feature from 'ol/Feature'
-import {Point, Circle} from 'ol/geom'
-import {Fill, Stroke, Style} from 'ol/style'
+import { Fill, Stroke, Style } from 'ol/style'
 import GeoJSON from 'ol/format/GeoJSON'
 
-import * as turf from '@turf/turf'
-import {throttle} from 'lodash/function'
-
 class SearchResultsLayer {
-  constructor(features) {
+  constructor (features) {
     this.source = new VectorSource()
-    this.layer  = new VectorLayer(this.layerSettings())
-    this.features   = features
+    this.layer = new VectorLayer(this.layerSettings())
+    this.features = features
   }
 
   layerSettings () {
     return {
       source: this.source,
-      style:  this.styleFunc      
+      style: this.styleFunc
     }
   }
 
@@ -33,14 +28,13 @@ class SearchResultsLayer {
       })
     })
   }
-  
-  addFeatures (features) {   
-    features.forEach( linestring => {
-      let [feature] = (new GeoJSON()).readFeatures(linestring)
-      this.source.addFeature( feature )
+
+  addFeatures (features) {
+    features.forEach(linestring => {
+      const [feature] = (new GeoJSON()).readFeatures(linestring)
+      this.source.addFeature(feature)
     })
   }
 }
-
 
 export default SearchResultsLayer

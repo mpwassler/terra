@@ -10,16 +10,16 @@ import { hike } from '../stores/hikeEditStore'
 
 const setup = () => {
   const element = document.querySelector('.app')
-  if(document.querySelector('.app')) {
-  	  hike.set(window.PATH_DATA)
-	  const app = new App({
-	    target: element,
-	    props: {
-	      name: 'Svelte'
-	    }
-	  });
+  if (document.querySelector('.app')) {
+    hike.set(window.PATH_DATA)
+    const app = new App({
+      target: element,
+      props: {
+        name: 'Svelte'
+      }
+    })
 
-	  window.app = app
+    window.app = app
   }
 }
 

@@ -1,17 +1,4 @@
-import { writable, readable } from 'svelte/store'
-import * as turf from '@turf/turf'
-
-function createHikeEditStore() {
-	const { subscribe, set, update } = writable(window.PATH_DATA)
-
-	return {
-		subscribe,
-		set,
-		update,
-		default: () => set(window.PATH_DATA)	
-	}
-}
-
+import { writable } from 'svelte/store'
 
 export const hike = writable(null)
 
