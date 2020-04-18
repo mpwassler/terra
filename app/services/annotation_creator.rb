@@ -1,4 +1,4 @@
-class AnnotationCreator  
+class AnnotationCreator
   def initialize(params)
     @params = params
     @decoder = RGeo::GeoJSON::Coder.new geo_factory: geo_facotry
@@ -18,7 +18,7 @@ class AnnotationCreator
   end
 
   private
-    def parse_point geojson
+    def parse_point(geojson)
       @decoder.decode(geojson).geometry
     end
 end

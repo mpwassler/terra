@@ -1,7 +1,6 @@
 require "mini_magick"
 module Media::Conversions
   class HeicToJpeg
-
     def initialize(blob)
       @blob     = blob
       @tmp_path = "tmp/#{blob.key}.jpg"
@@ -33,6 +32,5 @@ module Media::Conversions
         File.delete(@tmp_path) if File.exist?(@tmp_path)
         @blob.attachments.first.purge_later
       end
-
   end
 end
