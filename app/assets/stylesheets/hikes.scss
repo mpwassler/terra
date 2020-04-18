@@ -3,13 +3,13 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 canvas { max-width: 100%; }
 
-.carousel-cell {
-	width: 67%;
+.slides .carousel-cell {
+	width: 88%;
 	padding: 5%;
 	margin: 0 1%;
 	opacity: 0.6;
 }
 
-.carousel-cell.is-selected {
-	opacity: 1;	
+.slides .carousel-cell.is-selected {
+	opacity: 1;
 }

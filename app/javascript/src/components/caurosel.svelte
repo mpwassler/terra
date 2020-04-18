@@ -5,6 +5,10 @@
   let flkty
   let elem
 
+  export let adaptiveHeight = false
+
+  export let initialIndex = 0
+
   export let changeHandler = (index) => {}
 
   onMount(() => {
@@ -12,8 +16,9 @@
   	  // options
   	  cellAlign: 'left',
   	  cellSelector: '.carousel-cell',
-      prevNextButtons: false
-
+      prevNextButtons: false,
+      adaptiveHeight,
+      initialIndex
   	})
 
     flkty.on( 'change', changeHandler )
