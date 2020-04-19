@@ -54,7 +54,7 @@ export class Map {
   featuresToRender () {
     const bbPolygon = this.bboxPolygon()
     const tileset = cover.tiles(bbPolygon.geometry, limits)
-    const projectedFeature = turf.toMercator(this.area)
+    const projectedFeature = turf.toMercator(this.area, {mutate: true})
     return {
       ...projectedFeature,
       features: projectedFeature.features.map((f, cnt) => {
@@ -70,19 +70,14 @@ export class Map {
     }
   }
 
-  pathData (geojson) {
-    const simpleGeometry = turf.simplify(geojson, { tolerance: 0.01, highQuality: false })
-    return turf.toMercator(simpleGeometry)
-  }
-
   setViewport (geojson) {
     scene.initilaize(this.element)
-    var buffered = turf.buffer(turf.center(geojson), 5, { units: 'miles' })
+    var buffered = turf.buffer(turf.center(geojson), 4, { units: 'miles' })
     this.bbox = turf.bbox(buffered)
     this.area = this.tileArea()
     this.center = turf.center(this.area)
 
-    const pathData = turf.toMercator(geojson)
+    const pathData = turf.toMercator(geojson, {mutate: true})
     const projectedFeature = this.featuresToRender()
     const cameraPoint = this.centerToVector()
 
@@ -103,7 +98,7 @@ export class Map {
   }
 
   pointToVector (point) {
-    const projectedPoint = turf.toMercator(point)
+    const projectedPoint = turf.toMercator(point, {mutate: true})
     return new Vector3(
       projectedPoint.coordinates[0],
       projectedPoint.coordinates[1],
@@ -112,7 +107,7 @@ export class Map {
   }
 
   centerToVector () {
-    const projectedCenter = turf.toMercator(this.center)
+    const projectedCenter = turf.toMercator(this.center, {mutate: true})
     return new Vector3(
       projectedCenter.geometry.coordinates[0],
       projectedCenter.geometry.coordinates[1],

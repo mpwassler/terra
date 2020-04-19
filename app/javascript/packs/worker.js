@@ -1,35 +1,32 @@
-import getPixels from 'get-pixels'
-import { chunk, flatten } from 'lodash/array'
-
-const getHeightData = (path) => {
-  return new Promise((resolve, reject) => {
-    getPixels(path, (err, pixels) => {
-      if (err) return reject(err)
-      const heights = parseMdArray(pixels.data)
-      resolve(heights)
-    })
-  })
-}
+import { PlaneBufferGeometry } from 'three'
+import config from '../src/config'
 
 const parseMdArray = (rawData) => {
-  return chunk(rawData, 4)
-    .map(rgbToElevation)
+  const elevations = []
+  for ( var i = 0, j = 0, l = rawData.length; i < l; i ++, j += 4 ) {
+    let R = rawData[j],
+        G = rawData[j + 1],
+        B = rawData[j + 2]
+    elevations.push(rgbToElevation(R, G, B))
+  }
+  return elevations
 }
 
-const rgbToElevation = ([R, G, B, A]) => {
+const rgbToElevation = (R, G, B) => {
   return -10000 + ((R * 256 * 256 + G * 256 + B) * 0.1)
 }
 
 const verticiesWithElevation = (heights, vertices) => {
-  const points = chunk(vertices, 3)
-  const pointsWithElevation = points.map(([x, y, z], cnt) => {
-    return [x, y, heights[cnt]]
-  })
-  return flatten(pointsWithElevation)
+  for ( var i = 0, j = 0, l = vertices.length; i < l; i ++, j += 3 ) {
+    vertices[ j + 2 ] = heights[ i ]
+  }
 }
 
-onmessage = function({ data: [pixelData, planeVerticies, coords, texture] }) {
+onmessage = function({ data: [pixelData, coords, texture] }) {
+  const tileWidth = coords[2][0] - coords[0][0]
+  const geometry = new PlaneBufferGeometry(tileWidth, tileWidth, config.POINTS_PER_TILE, config.POINTS_PER_TILE)
+  var vertices = geometry.attributes.position.array
   const heights = parseMdArray(pixelData)
-  const terrainVertices = verticiesWithElevation(heights, planeVerticies)
-  postMessage([terrainVertices, coords, texture])
+  verticiesWithElevation(heights, vertices)
+  postMessage([vertices, coords, texture])
 }
