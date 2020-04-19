@@ -89,8 +89,9 @@ const setCameraTarget = (center) => {
 
 const setMesh = ({ features }) => {
   features.forEach(async (feature) => {
-    const mesh = await geometry.makeMesh(feature)
-    scene.add(mesh)
+    geometry.makeMesh(feature, (mesh) => {
+      scene.add(mesh)
+    })
   })
 }
 

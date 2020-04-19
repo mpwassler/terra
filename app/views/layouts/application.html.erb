@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
       var API_TOKEN = "<%= ENV['MAPBOX_API_TOKEN'] %>"
+      var WORKER_URL = "<%= asset_pack_path('worker.js') %>"
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.2.1/css/ol.css" type="text/css">
     <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
@@ -19,7 +20,7 @@
     <nav class="navbar is-transparent">
       <div class="navbar-brand">
         <a class="navbar-item" href="https://bulma.io">
-          
+
         </a>
         <div class="navbar-burger burger" data-target="navbarExampleTransparentExample">
           <span></span>
@@ -29,8 +30,8 @@
       </div>
 
       <div id="navbarExampleTransparentExample" class="navbar-menu">
-        <div class="navbar-start">          
-          
+        <div class="navbar-start">
+
         </div>
 
         <div class="navbar-end">
@@ -40,14 +41,14 @@
             </a>
             <div class="navbar-dropdown is-boxed">
               <%= link_to 'My Hikes', hikes_path, class: 'navbar-item' %>
-              
+
             </div>
           </div>
           <div class="navbar-item">
             <div class="field is-grouped">
               <p class="control">
                 <%= link_to 'New Hike', new_hike_path, class: 'button' %>
-              </p>              
+              </p>
             </div>
           </div>
         </div>
@@ -55,7 +56,7 @@
     </nav>
     <section class="section">
       <div class="container">
-        <%= yield %>      
+        <%= yield %>
       </div>
     </section>
   </body>
