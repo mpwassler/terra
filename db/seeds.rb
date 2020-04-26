@@ -6,21 +6,38 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-def hike_from_file file_name, name
+def hike_from_file file_name, name, user
   path = "#{::Rails.root}/spec/fixtures/files/#{file_name}"
   file = File.open(path)
-  GpxImporterService.new(file).call.tap do |hike|
-  	hike.name = name
-  end
+  GpxImporterService.new(file, user)
+                    .call
+                    .tap { |hike| hike.name = name }
 end
 
+User.destroy_all
+test_user =       User.create! username:              'Johnny Utah',
+                               email:                 'test@user.com',
+                               password:              'secret',
+                               password_confirmation: 'secret'
+
+test_subscriber = User.create! username:              'Bodhi',
+                               email:                 'test@subscriber.com',
+                               password:              'secret',
+                               password_confirmation: 'secret'
+
 Hike.destroy_all
-hike_from_file('maroon_peak.gpx', 'Maroon Peak').save
-hike_from_file('big_pine.gpx', 'Big Pine Creek').save
-hike_from_file('bright_angel.gpx', 'Bright Angel').save
-hike_from_file('chicago_basin.gpx', 'Chicago Basin').save
-hike_from_file('hornali.gpx', 'Hornali Hut').save
-hike_from_file('machu_picchu.gpx', 'Machu Picchu').save
-hike_from_file('mount_rainier.gpx', 'Mt Rainer').save
-hike_from_file('mt_whitney.gpx', 'Mt Whitney').save
-hike_from_file('tetons.gpx', 'Grand Teton').save
+hike_date = [
+  ['maroon_peak.gpx', 'Maroon Peak'],
+  ['big_pine.gpx', 'Big Pine Creek'],
+  ['bright_angel.gpx', 'Bright Angel'],
+  ['chicago_basin.gpx', 'Chicago Basin'],
+  ['hornali.gpx', 'Hornali Hut'],
+  ['machu_picchu.gpx', 'Machu Picchu'],
+  ['mount_rainier.gpx', 'Mt Rainer'],
+  ['mt_whitney.gpx', 'Mt Whitney'],
+  ['tetons.gpx', 'Grand Teton'],
+]
+hike_date.each_with_index do |file, index|
+  user = index % 2 == 0 ? test_user : test_subscriber
+  hike_from_file(file[0], file[1], user).save
+end

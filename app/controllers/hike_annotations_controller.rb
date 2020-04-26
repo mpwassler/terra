@@ -1,4 +1,6 @@
 class HikeAnnotationsController < ApplicationController
+  before_action :authenticate_user!
+
   def create
     @hike_annotation = AnnotationCreator.new(params).call
     if @hike_annotation.save

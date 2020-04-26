@@ -2,6 +2,10 @@ class HikeAnnotationSerializer < Blueprinter::Base
   identifier :id
   fields :copy, :point
 
+  field :copy do |h|
+    h.copy.gsub("'"){" "}
+  end
+
   def self.thumbnail(blob)
     variant = blob.variant resize: '250x250^',
                            extent: '250x250',
@@ -22,6 +26,9 @@ class HikeAnnotationSerializer < Blueprinter::Base
             thumbnail_path: self.thumbnail(blob)
           }
       end
+    else
+      []
     end
+
   end
 end

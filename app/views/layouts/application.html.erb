@@ -33,11 +33,11 @@
         <div class="navbar-start">
 
         </div>
-
+        <% if user_signed_in? %>
         <div class="navbar-end">
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link" href="https://bulma.io/documentation/overview/start/">
-              Account
+              <%= current_user.username %>
             </a>
             <div class="navbar-dropdown is-boxed">
               <%= link_to 'My Hikes', hikes_path, class: 'navbar-item' %>
@@ -52,6 +52,7 @@
             </div>
           </div>
         </div>
+        <% end %>
       </div>
     </nav>
     <section class="section">

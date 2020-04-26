@@ -72,7 +72,7 @@ export class Map {
 
   setViewport (geojson) {
     scene.initilaize(this.element)
-    var buffered = turf.buffer(turf.center(geojson), 4, { units: 'miles' })
+    var buffered = turf.buffer(turf.center(geojson), 5, { units: 'miles' })
     this.bbox = turf.bbox(buffered)
     this.area = this.tileArea()
     this.center = turf.center(this.area)
@@ -98,7 +98,7 @@ export class Map {
   }
 
   pointToVector (point) {
-    const projectedPoint = turf.toMercator(point, {mutate: true})
+    const projectedPoint = turf.toMercator(point)
     return new Vector3(
       projectedPoint.coordinates[0],
       projectedPoint.coordinates[1],
@@ -107,7 +107,7 @@ export class Map {
   }
 
   centerToVector () {
-    const projectedCenter = turf.toMercator(this.center, {mutate: true})
+    const projectedCenter = turf.toMercator(this.center)
     return new Vector3(
       projectedCenter.geometry.coordinates[0],
       projectedCenter.geometry.coordinates[1],

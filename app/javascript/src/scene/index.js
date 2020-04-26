@@ -124,7 +124,7 @@ const lookAt = ({ x, y, z }) => {
     ...animationSettings,
     x,
     y: (y + 500) - 600,
-    z: (z + 2500) - 600
+    z: (z + 1500) - 600
   })
   gsap.to(controls.target, { ...animationSettings, x: x - 600, y: y - 600, z })
 }

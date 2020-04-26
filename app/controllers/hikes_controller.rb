@@ -1,11 +1,12 @@
 class HikesController < ApplicationController
   before_action :set_hike, only: [:show, :edit, :update, :destroy]
   before_action :set_hike_json, only: [:show, :edit]
+  before_action :authenticate_user!, except: [:show]
 
   # GET /hikes
   # GET /hikes.json
   def index
-    @hikes = Hike.all
+    @hikes = hike_scope.all
   end
 
   # GET /hikes/1
@@ -24,6 +25,7 @@ class HikesController < ApplicationController
 
   # GET /hikes/1/edit
   def edit
+    authorize @hike
   end
 
   # POST /hikes
@@ -44,6 +46,7 @@ class HikesController < ApplicationController
   # PATCH/PUT /hikes/1
   # PATCH/PUT /hikes/1.json
   def update
+    authorize @hike
     respond_to do |format|
       if @hike.update(hike_params)
         format.html { redirect_to @hike, notice: 'Hike was successfully updated.' }
@@ -58,6 +61,7 @@ class HikesController < ApplicationController
   # DELETE /hikes/1
   # DELETE /hikes/1.json
   def destroy
+    authorize @hike
     @hike.destroy
     respond_to do |format|
       format.html { redirect_to hikes_url, notice: 'Hike was successfully destroyed.' }
@@ -68,9 +72,9 @@ class HikesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_hike
-      @hike = Hike.includes(:recordings,
-                            hike_annotations: [{ images_attachments: :blob }])
-                  .find(params[:id])
+      @hike = hike_scope.includes(:recordings,
+                                  hike_annotations: [{ images_attachments: :blob }])
+                        .find(params[:id])
     end
 
     def set_hike_json
@@ -80,5 +84,9 @@ class HikesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def hike_params
       params.require(:hike).permit(:name, :path_file)
+    end
+
+    def hike_scope
+      policy_scope(Hike)
     end
 end

@@ -1,9 +1,9 @@
 class GpxImporterService
   FORMAT = GisTypes::LineString
 
-  def initialize(file_object)
+  def initialize(file_object, user)
     @file = file_object
-    @hike = Hike.create
+    @hike = Hike.create user: user
     recording = Recording.create hike: @hike,
                                  path: parsed_file
     set_details_from_gpx recording
