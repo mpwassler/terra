@@ -3,6 +3,7 @@ import * as turf from '@turf/turf'
 import * as cover from '@mapbox/tile-cover'
 import { Vector3 } from 'three'
 
+
 import Marker from '../scene/marker'
 
 import config from '../config'
@@ -24,6 +25,7 @@ const limits = {
 
 export class Map {
   constructor (opts) {
+
     this.path = null // LatLon linestring
     this.bbox = null // LatLon boundingbox
     this.area = null // LatLon tile coverage
@@ -63,7 +65,7 @@ export class Map {
           properties: {
             tile: tileset[cnt],
             elevation: terrainTilePath(tileset[cnt]),
-            texture: sataliteTilePath(tileset[cnt])
+            texture: tileset[cnt]
           }
         }
       })
@@ -72,7 +74,7 @@ export class Map {
 
   setViewport (geojson) {
     scene.initilaize(this.element)
-    var buffered = turf.buffer(turf.center(geojson), 5, { units: 'miles' })
+    var buffered = turf.buffer(turf.center(geojson), 3, { units: 'miles' })
     this.bbox = turf.bbox(buffered)
     this.area = this.tileArea()
     this.center = turf.center(this.area)
@@ -82,7 +84,7 @@ export class Map {
     const cameraPoint = this.centerToVector()
 
     scene.setCameraTarget(cameraPoint)
-    scene.setMesh(projectedFeature)
+    scene.setMesh(projectedFeature, this.pointToVector(this.center.geometry))
     scene.drawLine(pathData)
   }
 

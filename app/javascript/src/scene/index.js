@@ -1,12 +1,27 @@
 
-import { Scene, PerspectiveCamera, WebGLRenderer, Vector3 } from 'three'
+import {
+  Scene,
+  PerspectiveCamera,
+  WebGLRenderer,
+  Vector3,
+  Geometry,
+  Mesh,
+  MeshBasicMaterial,
+  PlaneBufferGeometry,
+  BufferAttribute,
+  CanvasTexture
+} from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { Sky } from './shaders/sun.js'
 import config from '../config'
 import geometry from './geometry'
 import { GeoLine } from './geoline'
-
+import { TextureBuilder } from './textureBuilder'
 import gsap from 'gsap'
+import { chunk, flatten } from 'lodash/array'
+var tilebelt = require('@mapbox/tilebelt')
+
+
 
 const configureSun = (center) => {
   const sky = new Sky()
@@ -87,12 +102,113 @@ const setCameraTarget = (center) => {
   )
 }
 
-const setMesh = ({ features }) => {
-  features.forEach(async (feature) => {
-    geometry.makeMesh(feature, (mesh) => {
-      scene.add(mesh)
-    })
+const setMesh = async ({ features }, center) => {
+
+  let imageBuilder = new TextureBuilder({
+    tiles: features.map(f => f.properties.tile),
+    type: 'terrain'
   })
+
+  let tiles = features.map(f => {
+    return tilebelt.getChildren(f.properties.tile)
+  })
+
+  let textureBuilder = new TextureBuilder({
+    tiles: flatten(tiles)
+  })
+
+  textureBuilder.prefetch()
+
+  await imageBuilder.process()
+
+  let pixelData = imageBuilder.pixelData()
+  let gridData = imageBuilder.gridDetails()
+
+  let a = features[0].geometry.coordinates[0][2][0]
+  let b = features[0].geometry.coordinates[0][0][0]
+  let sizePerTile = a - b
+
+  let firstTile = features.find(feature => {
+    return (
+      feature.properties.tile[0] === gridData.start[0] &&
+      feature.properties.tile[1] === gridData.start[1] &&
+      feature.properties.tile[2] === gridData.start[2]
+    )
+  })
+
+  let startPoint = firstTile.geometry.coordinates[0][0]
+  // debugger
+  geometry.makeSingleMesh({
+    pixels: pixelData,
+    meters: sizePerTile,
+    gridSize: gridData.shape,
+    postition: startPoint,
+    widthRes: gridData.width,
+    heightRes: gridData.height
+  }, async (geometry) => {
+
+    await textureBuilder.process()
+    const material = new MeshBasicMaterial({ map: new CanvasTexture(textureBuilder.canvas) })
+    const mesh = new Mesh(geometry, material)
+    mesh.position.set(center.x, center.y, 0)
+
+    scene.add(mesh)
+  })
+
+  // features.forEach((feature) => {
+  //   geometry.makeMesh(feature, (mesh) => {
+  //     scene.add(mesh)
+  //   })
+  // })
+
+  // let p = config.POINTS_PER_TILE
+
+  // let sizePerTile = a - b
+  // let singlePlain = new PlaneBufferGeometry(sizePerTile * 10, sizePerTile * 10,  p * 10, p * 10)
+  // const material = new MeshBasicMaterial({ color: 0xffffff, wireframe: true })
+  // let plainMesh = new Mesh(singlePlain, material)
+  // plainMesh.position.set(features[0].geometry.coordinates[0][0][0], features[0].geometry.coordinates[0][0][1], 0)
+
+  // scene.add(plainMesh)
+
+
+
+  // let sataliteTexture = new TextureBuilder({
+  //   boundingBox: features[0].geometry.coordinates[0],
+  //   tiles: features.map(f => f.properties.tile),
+  // })
+  const getMeshData = (features) => {
+    return new Promise( (resolve, reject) => {
+      let meshes = []
+      features.forEach((feature) => {
+        geometry.makeMesh(feature, (mesh) => {
+          meshes.push(mesh)
+          if(meshes.length === features.length) {
+            resolve(meshes)
+          }
+          // scene.add(mesh)
+        })
+      })
+    })
+  }
+
+  // let featureTiles = await getMeshData(features)
+
+  // let geometries = featureTiles.map(tile => tile.geometry)
+  // let geom = THREE.BufferGeometryUtils.mergeBufferGeometries( geometries )
+  // let material = new MeshBasicMaterial({ color: 0xffffff, wireframe: true})
+  // var mesh = new Mesh( geom, material )
+  // mesh.geometry.computeBoundingBox()
+  // let size = mesh.geometry.boundingBox.getSize()
+  // const plain = new PlaneBufferGeometry(size.x, size.y, mesh.geometry.attributes.position.array.length / 4, mesh.geometry.attributes.position.array.length / 4)
+  // plain.setAttribute('position', new BufferAttribute(mesh.geometry.attributes.position.array, 3))
+  // var mesh = new Mesh( geom, material )
+  // scene.add( mesh )
+
+  // (mesh) => {
+  //   scene.add(mesh)
+  // }
+
 }
 
 const drawLine = (geojson) => {
@@ -123,10 +239,10 @@ const lookAt = ({ x, y, z }) => {
   gsap.to(camera.position, {
     ...animationSettings,
     x,
-    y: (y + 500) - 600,
-    z: (z + 1500) - 600
+    y: (y + 500) ,
+    z: (z + 1500)
   })
-  gsap.to(controls.target, { ...animationSettings, x: x - 600, y: y - 600, z })
+  gsap.to(controls.target, { ...animationSettings, x: x , y: y , z })
 }
 
 export default {

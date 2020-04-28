@@ -7,7 +7,7 @@ export class GeoLine {
 
   verticies () {
     return this.geoJson.coordinates.map(point => {
-      return new Vector3(point[0] - 600, point[1] - 600, point[2] + 20)
+      return new Vector3(point[0], point[1], point[2] + 20)
     })
   }
 

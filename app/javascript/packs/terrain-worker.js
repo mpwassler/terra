@@ -1,17 +1,13 @@
 import { PlaneBufferGeometry } from 'three'
-
-const THREE = global.THREE = require('three')
-
-require('three/examples/js/utils/BufferGeometryUtils.js')
 import config from '../src/config'
 
 const parseMdArray = (rawData) => {
-  const elevations = []
+  const elevations = new Float32Array(rawData.length / 4)
   for ( var i = 0, j = 0, l = rawData.length; i < l; i ++, j += 4 ) {
     let R = rawData[j],
         G = rawData[j + 1],
         B = rawData[j + 2]
-    elevations.push(rgbToElevation(R, G, B))
+    elevations[i] = rgbToElevation(R, G, B)
   }
   return elevations
 }
@@ -26,24 +22,36 @@ const verticiesWithElevation = (heights, vertices) => {
   }
 }
 
-const buildGeometryFromFeatures = (features) => {
-  let geometries = features.map(feature => {
-    const { geometry: { coordinates: [coords] } } = feature
-    const goemTileWidth = coords[2][0] - coords[0][0]
-    return new PlaneBufferGeometry(goemTileWidth, goemTileWidth, config.POINTS_PER_TILE, config.POINTS_PER_TILE)
+onmessage = function(event) {
+  let {
+    pixels,
+    meters,
+    gridSize,
+    postition,
+    widthRes,
+    heightRes
+  } = event.data
+
+  const heights = parseMdArray(pixels.data)
+
+  const geometry = new PlaneBufferGeometry(
+    meters * gridSize[0],
+    meters * gridSize[1],
+    widthRes - 1,
+    heightRes - 1
+  )
+  var vertices = geometry.attributes.position.array
+  verticiesWithElevation(heights, vertices)
+
+  postMessage({
+    meters,
+    gridSize,
+    postition,
+    vertices,
+    widthRes,
+    heightRes
   })
-  return THREE.BufferGeometryUtils.mergeBufferGeometries(geometries, false)
 }
-
-// onmessage = function({ data: [pixelData, coords, texture] }) {
-//   const tileWidth = coords[2][0] - coords[0][0]
-//   const geometry = new PlaneBufferGeometry(tileWidth - 50, tileWidth - 50, config.POINTS_PER_TILE, config.POINTS_PER_TILE)
-//   var vertices = geometry.attributes.position.array
-//   const heights = parseMdArray(pixelData)
-//   verticiesWithElevation(heights, vertices)
-//   postMessage([vertices, coords, texture])
-// }
-
 // onmessage = function({ data: [pixelData, features] }) {
 
 //   let geometry = buildGeometryFromFeatures(features)
