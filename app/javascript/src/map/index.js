@@ -8,16 +8,6 @@ import Marker from '../scene/marker'
 
 import config from '../config'
 
-const TOKEN_PARAM = `?access_token=${window.API_TOKEN}`
-
-const terrainTilePath = ([x, y, z]) => {
-  return `${config.TERRAIN_BASE_URL}/${z}/${x}/${y}.pngraw${TOKEN_PARAM}`
-}
-
-const sataliteTilePath = ([x, y, z]) => {
-  return `${config.SATALITE_BASE_URL}/${z}/${x}/${y}@2x.png${TOKEN_PARAM}`
-}
-
 const limits = {
   min_zoom: 15,
   max_zoom: 15
@@ -63,9 +53,7 @@ export class Map {
         return {
           ...f,
           properties: {
-            tile: tileset[cnt],
-            elevation: terrainTilePath(tileset[cnt]),
-            texture: tileset[cnt]
+            tile: tileset[cnt]
           }
         }
       })
@@ -74,7 +62,9 @@ export class Map {
 
   setViewport (geojson) {
     scene.initilaize(this.element)
-    var buffered = turf.buffer(turf.center(geojson), 3, { units: 'miles' })
+    // 3-5 mile buffer on desktop
+    var buffered = turf.buffer(turf.center(geojson), 3.5, { units: 'miles' })
+    // dont buffer, render just enough on mobile
     this.bbox = turf.bbox(buffered)
     this.area = this.tileArea()
     this.center = turf.center(this.area)

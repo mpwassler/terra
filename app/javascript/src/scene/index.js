@@ -9,7 +9,8 @@ import {
   MeshBasicMaterial,
   PlaneBufferGeometry,
   BufferAttribute,
-  CanvasTexture
+  CanvasTexture,
+  LinearFilter
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { Sky } from './shaders/sun.js'
@@ -74,7 +75,9 @@ const width = window ? window.innerWidth : 1000
 const height = window ? window.innerHeight * 0.75 : 1000
 const scene = new Scene()
 const camera = new PerspectiveCamera(75, width / height, 0.1, config.VIEW_RANGE)
-const renderer = new WebGLRenderer()
+var canvas = document.createElement( 'canvas' )
+var context = canvas.getContext( 'webgl2', { alpha: false } )
+const renderer = new WebGLRenderer({ canvas: canvas, context: context })
 camera.up.set(0, 0, 1)
 const controls = new OrbitControls(camera, renderer.domElement)
 
@@ -85,6 +88,7 @@ document.addEventListener('turbolinks:before-render', () => {
 })
 
 const initilaize = (element) => {
+  renderer.setPixelRatio( window.devicePixelRatio )
   renderer.setSize(width, height)
   if (element) element.appendChild(renderer.domElement)
   controls.update()
@@ -109,12 +113,16 @@ const setMesh = async ({ features }, center) => {
     type: 'terrain'
   })
 
-  let tiles = features.map(f => {
-    return tilebelt.getChildren(f.properties.tile)
+  // render base size on mobile
+  let imagTiles = features.map(f => f.properties.tile)
+
+  // upres on desktop
+  let tileZoom1 = imagTiles.map(tileInfo => {
+      return tilebelt.getChildren(tileInfo)
   })
 
   let textureBuilder = new TextureBuilder({
-    tiles: flatten(tiles)
+    tiles: flatten(tileZoom1)
   })
 
   textureBuilder.prefetch()
@@ -138,7 +146,7 @@ const setMesh = async ({ features }, center) => {
 
   let startPoint = firstTile.geometry.coordinates[0][0]
   // debugger
-  geometry.makeSingleMesh({
+  geometry.build({
     pixels: pixelData,
     meters: sizePerTile,
     gridSize: gridData.shape,
@@ -148,66 +156,17 @@ const setMesh = async ({ features }, center) => {
   }, async (geometry) => {
 
     await textureBuilder.process()
-    const material = new MeshBasicMaterial({ map: new CanvasTexture(textureBuilder.canvas) })
+    const texture = new CanvasTexture(textureBuilder.canvas)
+    // do this only on desktop
+    texture.minFilter = LinearFilter
+    const material = new MeshBasicMaterial({
+      map: texture
+    })
     const mesh = new Mesh(geometry, material)
     mesh.position.set(center.x, center.y, 0)
 
     scene.add(mesh)
   })
-
-  // features.forEach((feature) => {
-  //   geometry.makeMesh(feature, (mesh) => {
-  //     scene.add(mesh)
-  //   })
-  // })
-
-  // let p = config.POINTS_PER_TILE
-
-  // let sizePerTile = a - b
-  // let singlePlain = new PlaneBufferGeometry(sizePerTile * 10, sizePerTile * 10,  p * 10, p * 10)
-  // const material = new MeshBasicMaterial({ color: 0xffffff, wireframe: true })
-  // let plainMesh = new Mesh(singlePlain, material)
-  // plainMesh.position.set(features[0].geometry.coordinates[0][0][0], features[0].geometry.coordinates[0][0][1], 0)
-
-  // scene.add(plainMesh)
-
-
-
-  // let sataliteTexture = new TextureBuilder({
-  //   boundingBox: features[0].geometry.coordinates[0],
-  //   tiles: features.map(f => f.properties.tile),
-  // })
-  const getMeshData = (features) => {
-    return new Promise( (resolve, reject) => {
-      let meshes = []
-      features.forEach((feature) => {
-        geometry.makeMesh(feature, (mesh) => {
-          meshes.push(mesh)
-          if(meshes.length === features.length) {
-            resolve(meshes)
-          }
-          // scene.add(mesh)
-        })
-      })
-    })
-  }
-
-  // let featureTiles = await getMeshData(features)
-
-  // let geometries = featureTiles.map(tile => tile.geometry)
-  // let geom = THREE.BufferGeometryUtils.mergeBufferGeometries( geometries )
-  // let material = new MeshBasicMaterial({ color: 0xffffff, wireframe: true})
-  // var mesh = new Mesh( geom, material )
-  // mesh.geometry.computeBoundingBox()
-  // let size = mesh.geometry.boundingBox.getSize()
-  // const plain = new PlaneBufferGeometry(size.x, size.y, mesh.geometry.attributes.position.array.length / 4, mesh.geometry.attributes.position.array.length / 4)
-  // plain.setAttribute('position', new BufferAttribute(mesh.geometry.attributes.position.array, 3))
-  // var mesh = new Mesh( geom, material )
-  // scene.add( mesh )
-
-  // (mesh) => {
-  //   scene.add(mesh)
-  // }
 
 }
 
