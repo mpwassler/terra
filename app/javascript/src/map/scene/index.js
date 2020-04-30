@@ -14,7 +14,7 @@ import {
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { Sky } from './shaders/sun.js'
-import config from '../config'
+import config from '../../config'
 import geometry from './geometry'
 import { GeoLine } from './geoline'
 import { TextureBuilder } from './textureBuilder'
@@ -106,66 +106,58 @@ const setCameraTarget = (center) => {
   )
 }
 
-const setMesh = async ({ features }, center) => {
+const setMesh = async ({ features, tiles, center }) => {
 
   let imageBuilder = new TextureBuilder({
-    tiles: features.map(f => f.properties.tile),
+    tiles,
     type: 'terrain'
   })
 
-  // render base size on mobile
-  let imagTiles = features.map(f => f.properties.tile)
+  // // render base size on mobile
+  // let imagTiles = features.map(f => f.properties.tile)
 
   // upres on desktop
-  let tileZoom1 = imagTiles.map(tileInfo => {
+  let tileZoom1 = tiles.map(tileInfo => {
       return tilebelt.getChildren(tileInfo)
   })
 
-  let textureBuilder = new TextureBuilder({
-    tiles: flatten(tileZoom1)
-  })
 
-  textureBuilder.prefetch()
 
   await imageBuilder.process()
 
   let pixelData = imageBuilder.pixelData()
   let gridData = imageBuilder.gridDetails()
 
-  let a = features[0].geometry.coordinates[0][2][0]
-  let b = features[0].geometry.coordinates[0][0][0]
+  let a = features.features[0].geometry.coordinates[0][2][0]
+  let b = features.features[0].geometry.coordinates[0][0][0]
   let sizePerTile = a - b
 
-  let firstTile = features.find(feature => {
-    return (
-      feature.properties.tile[0] === gridData.start[0] &&
-      feature.properties.tile[1] === gridData.start[1] &&
-      feature.properties.tile[2] === gridData.start[2]
-    )
-  })
-
-  let startPoint = firstTile.geometry.coordinates[0][0]
   // debugger
   geometry.build({
     pixels: pixelData,
     meters: sizePerTile,
     gridSize: gridData.shape,
-    postition: startPoint,
     widthRes: gridData.width,
     heightRes: gridData.height
   }, async (geometry) => {
 
-    await textureBuilder.process()
-    const texture = new CanvasTexture(textureBuilder.canvas)
-    // do this only on desktop
-    texture.minFilter = LinearFilter
-    const material = new MeshBasicMaterial({
-      map: texture
+    let textureBuilder = new TextureBuilder({
+      tiles: flatten(tileZoom1)
     })
-    const mesh = new Mesh(geometry, material)
-    mesh.position.set(center.x, center.y, 0)
 
-    scene.add(mesh)
+    textureBuilder.process().then(() => {
+      const texture = new CanvasTexture(textureBuilder.canvas)
+      // do this only on desktop
+      texture.minFilter = LinearFilter
+      const material = new MeshBasicMaterial({ map: texture })
+      const mesh = new Mesh(geometry, material)
+      mesh.position.set(center.x, center.y, 0)
+      scene.add(mesh)
+
+      console.log(renderer.info)
+    })
+
+
   })
 
 }

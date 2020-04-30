@@ -1,10 +1,12 @@
-import scene from '../scene'
+import scene from './scene'
 import * as turf from '@turf/turf'
 import * as cover from '@mapbox/tile-cover'
 import { Vector3 } from 'three'
 
 
-import Marker from '../scene/marker'
+import { Linestring } from './geography/linestring.js'
+
+import Marker from './scene/marker'
 
 import config from '../config'
 
@@ -15,12 +17,43 @@ const limits = {
 
 export class Map {
   constructor (opts) {
-
-    this.path = null // LatLon linestring
-    this.bbox = null // LatLon boundingbox
-    this.area = null // LatLon tile coverage
-    this.center = null // LatLon center point
+    console.log(opts)
     this.element = opts.element
+    this.opts    = opts
+    this.init()
+  }
+
+  init () {
+    this.feature = new Linestring(this.opts.feature)
+
+    const center = this.feature.centerPoint()
+
+    const bufferSize = this.opts.buffer || 2.5
+
+    const bufferUnit = this.opts.bufferUnit || 'miles'
+
+    const { tiles, polygons } = this.feature
+                                    // .bufferBy(bufferSize, bufferUnit)
+                                    .getTiles()
+    scene.initilaize(this.element)
+
+    scene.setCameraTarget(center)
+
+    const meshConfig = {
+      tiles: tiles,
+      center: center,
+      features: polygons
+    }
+    debugger
+
+    scene.setMesh(meshConfig)
+
+    this.render()
+  }
+
+  drawLine (geojson) {
+    const linestring = new Linestring(geojson)
+    scene.drawLine(this.feature.path)
   }
 
   render (geojson) {
@@ -78,7 +111,7 @@ export class Map {
     scene.drawLine(pathData)
   }
 
-  addMarker (point) {
+  drawMarker (point) {
     const position = this.pointToVector(point)
     const marker = new Marker(position)
 
@@ -86,7 +119,7 @@ export class Map {
   }
 
   focusOn (point) {
-    scene.lookAt(this.pointToVector(point))
+    //scene.lookAt(this.pointToVector(point))
   }
 
   pointToVector (point) {

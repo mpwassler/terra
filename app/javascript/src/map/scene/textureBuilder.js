@@ -1,4 +1,4 @@
-import config from '../config'
+import config from '../../config'
 import { uniq } from 'lodash/array'
 
 const TOKEN_PARAM = `?access_token=${window.API_TOKEN}`

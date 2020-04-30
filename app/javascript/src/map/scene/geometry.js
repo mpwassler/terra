@@ -8,7 +8,7 @@ import {
   CanvasTexture
 } from 'three'
 
-import config from '../config'
+import config from '../../config'
 
 const elevationWorker = new Worker(TERRAIN_WORKER_URL)
 
