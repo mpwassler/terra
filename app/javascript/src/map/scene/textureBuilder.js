@@ -12,38 +12,21 @@ const sataliteTilePath = ([x, y, z]) => {
 }
 
 export class TextureBuilder {
-  constructor (opts) {
-    this.type = opts.type
-    this.tiles = opts.tiles
-    this.debug = opts.debug
-    this.tileSize = 256
+  constructor (tileGrid, type) {
+    this.type = type
+    this.grid = tileGrid
     this.loaded = 0
-    this.rows    = uniq(this.tiles.map(([x,y,z]) => y)).length
-    this.columns = uniq(this.tiles.map(([x,y,z]) => x)).length
-    this.z = this.tiles[0][2]
-    this.sortTiles()
+    this.debug = false
     this.buildCanvas()
 
   }
 
   buildCanvas () {
     this.canvas = document.createElement("canvas")
-    this.canvas.height = this.rows * this.tileSize
-    this.canvas.width = this.columns * this.tileSize
+    this.canvas.height = this.grid.shape.rows * this.grid.tileSize
+    this.canvas.width = this.grid.shape.columns * this.grid.tileSize
     if (this.debug) document.body.appendChild(this.canvas)
     this.context = this.canvas.getContext('2d')
-  }
-
-  sortTiles () {
-    let yValues = uniq(this.tiles.map(([x,y,z]) => y)).sort()
-    let xValues = uniq(this.tiles.map(([x,y,z]) => x)).sort()
-    let tiles = []
-    for (var i = 0; i < yValues.length; i++) {
-      for (var j = 0; j < xValues.length; j++) {
-        tiles.push([ xValues[j], yValues[i], this.z ])
-      }
-    }
-    this.tiles = tiles
   }
 
   layoutTiles () {
@@ -52,13 +35,13 @@ export class TextureBuilder {
     let column = 1
     let row = 1
     let imagePathFunc = this.type === 'terrain' ? terrainTilePath : sataliteTilePath
-    this.tiles.forEach((tile, index) => {
+    this.grid.tiles.forEach((tile, index) => {
       let url = imagePathFunc(tile)
-      x = this.tileSize * (column - 1 )
-      y =  this.tileSize * (row - 1)
+      x = this.grid.tileSize * (column - 1 )
+      y =  this.grid.tileSize * (row - 1)
       this.loadAndDrawImage(url, x, y)
       column += 1
-      if (column > this.columns) {
+      if (column > this.grid.shape.columns) {
         column = 1
         row += 1
       }
@@ -71,7 +54,7 @@ export class TextureBuilder {
     image.onload = () => {
       this.loaded += 1
       this.context.drawImage(image, x, y, 256, 256)
-      if(this.loaded === this.tiles.length) {
+      if(this.loaded === this.grid.tiles.length) {
         this.imagesLoaded()
       }
     }
@@ -100,16 +83,8 @@ export class TextureBuilder {
     })
   }
 
-  gridDetails () {
-    return {
-      shape:  [this.columns, this.rows], // x, y
-      width:  this.columns * this.tileSize,
-      height: this.rows * this.tileSize,
-      start: this.tiles[0]
-    }
-  }
-
-  pixelData () {
+  async pixelData () {
+    await this.process()
     return this.context.getImageData(0, 0, this.canvas.width, this.canvas.height)
   }
 }

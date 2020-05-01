@@ -22,6 +22,8 @@ import gsap from 'gsap'
 import { chunk, flatten } from 'lodash/array'
 var tilebelt = require('@mapbox/tilebelt')
 
+import { TileGrid } from '../tiles/tile-grid'
+
 
 
 const configureSun = (center) => {
@@ -95,9 +97,10 @@ const initilaize = (element) => {
 }
 
 const setCameraTarget = (center) => {
-  configureSun(center)
+  let vec = new Vector3(center.x,center.y,center.z)
+  configureSun(vec)
 
-  controls.target = center
+  controls.target = vec
   controls.update()
   camera.position.set(
     controls.target.x,
@@ -106,60 +109,36 @@ const setCameraTarget = (center) => {
   )
 }
 
-const setMesh = async ({ features, tiles, center }) => {
-
-  let imageBuilder = new TextureBuilder({
-    tiles,
-    type: 'terrain'
-  })
-
-  // // render base size on mobile
-  // let imagTiles = features.map(f => f.properties.tile)
-
-  // upres on desktop
+const buildMaterial = async (tiles) => {
   let tileZoom1 = tiles.map(tileInfo => {
       return tilebelt.getChildren(tileInfo)
   })
 
+  let textrueGrid = new TileGrid({ tiles: flatten(tileZoom1) })
+  let textureBuilder = new TextureBuilder(textrueGrid)
 
+  await textureBuilder.process()
+  const texture = new CanvasTexture(textureBuilder.canvas)
+  // do this only on desktop
+  texture.minFilter = LinearFilter
+  const material = new MeshBasicMaterial({ map: texture })
+  return material
+}
 
-  await imageBuilder.process()
-
-  let pixelData = imageBuilder.pixelData()
-  let gridData = imageBuilder.gridDetails()
-
-  let a = features.features[0].geometry.coordinates[0][2][0]
-  let b = features.features[0].geometry.coordinates[0][0][0]
-  let sizePerTile = a - b
-
-  // debugger
+const setMesh = async (meshConfig) => {
   geometry.build({
-    pixels: pixelData,
-    meters: sizePerTile,
-    gridSize: gridData.shape,
-    widthRes: gridData.width,
-    heightRes: gridData.height
+    pixels: meshConfig.pixelData,
+    meters: meshConfig.metersPerTile,
+    gridSize: [meshConfig.gridColumns, meshConfig.gridRows],
+    widthRes: meshConfig.xResolution,
+    heightRes: meshConfig.yResolutuin
   }, async (geometry) => {
-
-    let textureBuilder = new TextureBuilder({
-      tiles: flatten(tileZoom1)
-    })
-
-    textureBuilder.process().then(() => {
-      const texture = new CanvasTexture(textureBuilder.canvas)
-      // do this only on desktop
-      texture.minFilter = LinearFilter
-      const material = new MeshBasicMaterial({ map: texture })
+    buildMaterial(meshConfig.tiles).then(material => {
       const mesh = new Mesh(geometry, material)
-      mesh.position.set(center.x, center.y, 0)
+      mesh.position.set(meshConfig.center.x, meshConfig.center.y, 0)
       scene.add(mesh)
-
-      console.log(renderer.info)
     })
-
-
   })
-
 }
 
 const drawLine = (geojson) => {

@@ -17,10 +17,12 @@ export class Linestring extends Geography {
     const boundingBox   = turf.bboxPolygon(this.boundingBox)
     const tileset       = cover.tiles(boundingBox.geometry, limits)
     const tilePloygons  = cover.geojson(boundingBox.geometry, limits)
+    const center        = turf.center(tilePloygons)
 
     return {
       tiles:    tileset,
-      polygons: this.project(tilePloygons)
+      polygons: this.project(tilePloygons),
+      center:   this.toVector(this.project(center))
     }
   }
 }
