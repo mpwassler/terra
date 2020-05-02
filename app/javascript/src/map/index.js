@@ -19,6 +19,7 @@ export class Map {
     console.log(opts)
     this.element = opts.element
     this.opts    = opts
+    this.scene   = scene
     this.init()
   }
 
@@ -53,29 +54,29 @@ export class Map {
       pixelData
     }
 
-    scene.initilaize(this.element)
+    this.scene.initilaize(this.element)
 
-    scene.setCameraTarget(center)
+    this.scene.setCameraTarget(center)
 
-    scene.setMesh(meshConfig)
+    this.scene.setMesh(meshConfig)
 
-    scene.start()
+    this.scene.start()
   }
 
   drawLine (geojson) {
     const linestring = new Linestring(geojson)
-    scene.drawLine(this.feature.path)
+    this.scene.drawLine(this.feature.path)
   }
 
   drawMarker (point) {
     const position = this.pointToVector(point)
     const marker = new Marker(position)
 
-    scene.add(marker.sprite)
+    this.scene.add(marker.sprite)
   }
 
   focusOn (point) {
-    scene.lookAt(this.pointToVector(point))
+    this.scene.lookAt(this.pointToVector(point))
   }
 
   pointToVector (point) {

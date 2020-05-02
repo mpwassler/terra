@@ -13,17 +13,17 @@ export class Geography {
     this.projOpts    = { mutate: true }
   }
 
-  centerPoint () {
-    const point = this.project(this.center)
-    return this.toVector(point)
-  }
-
   polygonMeters () {
     return this.project(this.polygon.geometry)
   }
 
   project (feature) {
     return this.projector(feature, this.projOpts)
+  }
+
+  centerPoint () {
+    const point = this.project(this.center)
+    return this.toVector(point)
   }
 
   toVector (point) {
