@@ -6,13 +6,14 @@ To prep the DB and install npm dependancies run `./scripts/bootstrap.sh`
 
 `docker-compose exec app yarn --pure-lockfile` to just install node modules
 
-Requires a `MAPBOX_API_TOKEN` ENV variable be set. Either via export from a shell config or in a `.env` file. 
+Requires a `MAPBOX_API_TOKEN` ENV variable be set. Either via export from a shell config or in a `.env` file.
 
 
-# Linting 
+# Linting
 
 Run `./scripts/lint.sh` to run linters (rubocop and standardjs)
 
 # Testing
 
-Run `./scrips/spec.sh` to run the rspec tests. 
+Run `./scrips/spec.sh` to run the rspec tests.
+Run `./scrips/jest.sh` to run the jest tests.
