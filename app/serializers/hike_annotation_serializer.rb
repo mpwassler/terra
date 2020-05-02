@@ -3,7 +3,7 @@ class HikeAnnotationSerializer < Blueprinter::Base
   fields :copy, :point
 
   field :copy do |h|
-    h.copy.gsub("'"){" "}
+    h.copy.gsub("'") { " " }
   end
 
   def self.thumbnail(blob)
@@ -15,20 +15,19 @@ class HikeAnnotationSerializer < Blueprinter::Base
 
   field :images do |hike_annotation|
     if hike_annotation.images.attached?
-      hike_annotation.images.select{ |i| i.blob.variable? }.map do |image|
+      hike_annotation.images.select { |i| i.blob.variable? }.map do |image|
         blob = image.blob
-          {
-            id: blob.id,
-            path: Rails.application.routes.url_helpers.url_for(blob),
-            metadata: blob.metadata,
-            filename: "#{blob.filename}",
-            content_type: blob.content_type,
-            thumbnail_path: self.thumbnail(blob)
-          }
+        {
+          id: blob.id,
+          path: Rails.application.routes.url_helpers.url_for(blob),
+          metadata: blob.metadata,
+          filename: "#{blob.filename}",
+          content_type: blob.content_type,
+          thumbnail_path: self.thumbnail(blob)
+        }
       end
     else
       []
     end
-
   end
 end

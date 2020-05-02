@@ -3,7 +3,7 @@ import { Sprite, SpriteMaterial, TextureLoader } from 'three'
 class Marker {
   constructor (point) {
     const sprite = this.makeSprite()
-    sprite.position.set(point.x - 600, point.y - 600, point.z)
+    sprite.position.set(point.x, point.y, point.z)
     sprite.scale.set(150, 150, 150)
     this.sprite = sprite
   }

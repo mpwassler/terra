@@ -1,100 +1,81 @@
-import scene from '../scene'
+import scene from './scene'
 import * as turf from '@turf/turf'
-import * as cover from '@mapbox/tile-cover'
 import { Vector3 } from 'three'
+import { Linestring } from './geography/linestring.js'
+import Marker from './scene/marker'
 
-import Marker from '../scene/marker'
+import { TileGrid } from './tiles/tile-grid'
+import { TextureBuilder } from './scene/textureBuilder'
 
-import config from '../config'
-
-const TOKEN_PARAM = `?access_token=${window.API_TOKEN}`
-
-const terrainTilePath = ([x, y, z]) => {
-  return `${config.TERRAIN_BASE_URL}/${z}/${x}/${y}.pngraw${TOKEN_PARAM}`
-}
-
-const sataliteTilePath = ([x, y, z]) => {
-  return `${config.SATALITE_BASE_URL}/${z}/${x}/${y}@2x.png${TOKEN_PARAM}`
-}
-
-const limits = {
-  min_zoom: 15,
-  max_zoom: 15
+const getTileMeters = (feature) => {
+  const a = feature.geometry.coordinates[0][2][0]
+  const b = feature.geometry.coordinates[0][0][0]
+  return a - b
 }
 
 export class Map {
   constructor (opts) {
-    this.path = null // LatLon linestring
-    this.bbox = null // LatLon boundingbox
-    this.area = null // LatLon tile coverage
-    this.center = null // LatLon center point
+    console.log(opts)
     this.element = opts.element
+    this.opts = opts
+    this.scene = scene
+    this.init()
   }
 
-  render (geojson) {
-    scene.start()
-  }
+  async init () {
+    this.feature = new Linestring(this.opts.feature)
 
-  showTile (tile) {
-    scene.renderTile(tile)
-  }
+    const bufferSize = this.opts.buffer || 2.5
 
-  projectedCenter () {
-    return turf.toMercator(this.center)
-  }
+    const bufferUnit = this.opts.bufferUnit || 'miles'
 
-  bboxPolygon () {
-    return turf.bboxPolygon(this.bbox)
-  }
+    const { tiles, polygons, center } = this.feature
+      .bufferBy(bufferSize, bufferUnit)
+      .getTiles()
 
-  tileArea () {
-    return cover.geojson(this.bboxPolygon().geometry, limits)
-  }
+    const metersPerTile = getTileMeters(polygons.features[0])
 
-  featuresToRender () {
-    const bbPolygon = this.bboxPolygon()
-    const tileset = cover.tiles(bbPolygon.geometry, limits)
-    const projectedFeature = turf.toMercator(this.area, {mutate: true})
-    return {
-      ...projectedFeature,
-      features: projectedFeature.features.map((f, cnt) => {
-        return {
-          ...f,
-          properties: {
-            tile: tileset[cnt],
-            elevation: terrainTilePath(tileset[cnt]),
-            texture: sataliteTilePath(tileset[cnt])
-          }
-        }
-      })
+    const elevationGrid = new TileGrid({ tiles })
+
+    const textureBuilder = new TextureBuilder(elevationGrid, 'terrain')
+
+    const pixelData = await textureBuilder.pixelData()
+
+    const meshConfig = {
+      tiles: tiles,
+      center: center,
+      features: polygons,
+      gridRows: elevationGrid.shape.rows,
+      gridColumns: elevationGrid.shape.columns,
+      xResolution: elevationGrid.width,
+      yResolutuin: elevationGrid.height,
+      metersPerTile,
+      pixelData
     }
+
+    this.scene.initilaize(this.element)
+
+    this.scene.setCameraTarget(center)
+
+    this.scene.setMesh(meshConfig)
+
+    this.scene.start()
   }
 
-  setViewport (geojson) {
-    scene.initilaize(this.element)
-    var buffered = turf.buffer(turf.center(geojson), 5, { units: 'miles' })
-    this.bbox = turf.bbox(buffered)
-    this.area = this.tileArea()
-    this.center = turf.center(this.area)
-
-    const pathData = turf.toMercator(geojson, {mutate: true})
-    const projectedFeature = this.featuresToRender()
-    const cameraPoint = this.centerToVector()
-
-    scene.setCameraTarget(cameraPoint)
-    scene.setMesh(projectedFeature)
-    scene.drawLine(pathData)
+  drawLine (geojson) {
+    const linestring = new Linestring(geojson)
+    this.scene.drawLine(linestring.path)
   }
 
-  addMarker (point) {
+  drawMarker (point) {
     const position = this.pointToVector(point)
     const marker = new Marker(position)
 
-    scene.add(marker.sprite)
+    this.scene.add(marker.sprite)
   }
 
   focusOn (point) {
-    scene.lookAt(this.pointToVector(point))
+    this.scene.lookAt(this.pointToVector(point))
   }
 
   pointToVector (point) {
@@ -103,15 +84,6 @@ export class Map {
       projectedPoint.coordinates[0],
       projectedPoint.coordinates[1],
       projectedPoint.coordinates[2] + 75
-    )
-  }
-
-  centerToVector () {
-    const projectedCenter = turf.toMercator(this.center)
-    return new Vector3(
-      projectedCenter.geometry.coordinates[0],
-      projectedCenter.geometry.coordinates[1],
-      2500
     )
   }
 }

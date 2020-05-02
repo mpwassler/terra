@@ -31,7 +31,7 @@ class HikesController < ApplicationController
   # POST /hikes
   # POST /hikes.json
   def create
-    @hike = GpxImporterService.new(hike_params[:path_file]).call
+    @hike = GpxImporterService.new(hike_params[:path_file], current_user).call
     respond_to do |format|
       if @hike.save
         format.html { redirect_to edit_hike_path(@hike), notice: 'Hike was successfully created.' }
@@ -72,7 +72,7 @@ class HikesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_hike
-      @hike = hike_scope.includes(:recordings,
+      @hike = Hike.includes(:recordings,
                                   hike_annotations: [{ images_attachments: :blob }])
                         .find(params[:id])
     end

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
       var API_TOKEN = "<%= ENV['MAPBOX_API_TOKEN'] %>"
-      var WORKER_URL = "<%= asset_pack_path('worker.js') %>"
+      var TERRAIN_WORKER_URL = "<%= asset_pack_path('terrain-worker.js') %>"
     </script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.2.1/css/ol.css" type="text/css">
     <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
@@ -57,8 +57,9 @@
     </nav>
     <section class="section">
       <div class="container">
-        <%= yield %>
       </div>
     </section>
+    <p id="notice"><%= notice %></p>
+    <%= yield %>
   </body>
 </html>

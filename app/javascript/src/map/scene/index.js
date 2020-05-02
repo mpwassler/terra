@@ -1,12 +1,25 @@
 
-import { Scene, PerspectiveCamera, WebGLRenderer, Vector3 } from 'three'
+import {
+  Scene,
+  PerspectiveCamera,
+  WebGLRenderer,
+  Vector3,
+  Mesh,
+  MeshBasicMaterial,
+  CanvasTexture,
+  LinearFilter
+} from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { Sky } from './shaders/sun.js'
-import config from '../config'
+import config from '../../config'
 import geometry from './geometry'
 import { GeoLine } from './geoline'
-
+import { TextureBuilder } from './textureBuilder'
 import gsap from 'gsap'
+import { flatten } from 'lodash/array'
+
+import { TileGrid } from '../tiles/tile-grid'
+var tilebelt = require('@mapbox/tilebelt')
 
 const configureSun = (center) => {
   const sky = new Sky()
@@ -59,7 +72,9 @@ const width = window ? window.innerWidth : 1000
 const height = window ? window.innerHeight * 0.75 : 1000
 const scene = new Scene()
 const camera = new PerspectiveCamera(75, width / height, 0.1, config.VIEW_RANGE)
-const renderer = new WebGLRenderer()
+var canvas = document.createElement('canvas')
+var context = canvas.getContext('webgl2', { alpha: false })
+const renderer = new WebGLRenderer({ canvas: canvas, context: context })
 camera.up.set(0, 0, 1)
 const controls = new OrbitControls(camera, renderer.domElement)
 
@@ -70,15 +85,17 @@ document.addEventListener('turbolinks:before-render', () => {
 })
 
 const initilaize = (element) => {
+  renderer.setPixelRatio(window.devicePixelRatio)
   renderer.setSize(width, height)
   if (element) element.appendChild(renderer.domElement)
   controls.update()
 }
 
 const setCameraTarget = (center) => {
-  configureSun(center)
+  const vec = new Vector3(center.x, center.y, center.z)
+  configureSun(vec)
 
-  controls.target = center
+  controls.target = vec
   controls.update()
   camera.position.set(
     controls.target.x,
@@ -87,9 +104,33 @@ const setCameraTarget = (center) => {
   )
 }
 
-const setMesh = ({ features }) => {
-  features.forEach(async (feature) => {
-    geometry.makeMesh(feature, (mesh) => {
+const buildMaterial = async (tiles) => {
+  const tileZoom1 = tiles.map(tileInfo => {
+    return tilebelt.getChildren(tileInfo)
+  })
+
+  const textrueGrid = new TileGrid({ tiles: flatten(tileZoom1) })
+  const textureBuilder = new TextureBuilder(textrueGrid)
+
+  await textureBuilder.process()
+  const texture = new CanvasTexture(textureBuilder.canvas)
+  // do this only on desktop
+  texture.minFilter = LinearFilter
+  const material = new MeshBasicMaterial({ map: texture })
+  return material
+}
+
+const setMesh = async (meshConfig) => {
+  geometry.build({
+    pixels: meshConfig.pixelData,
+    meters: meshConfig.metersPerTile,
+    gridSize: [meshConfig.gridColumns, meshConfig.gridRows],
+    widthRes: meshConfig.xResolution,
+    heightRes: meshConfig.yResolutuin
+  }, async (geometry) => {
+    buildMaterial(meshConfig.tiles).then(material => {
+      const mesh = new Mesh(geometry, material)
+      mesh.position.set(meshConfig.center.x, meshConfig.center.y, 0)
       scene.add(mesh)
     })
   })
@@ -123,10 +164,10 @@ const lookAt = ({ x, y, z }) => {
   gsap.to(camera.position, {
     ...animationSettings,
     x,
-    y: (y + 500) - 600,
-    z: (z + 1500) - 600
+    y: (y + 500),
+    z: (z + 1500)
   })
-  gsap.to(controls.target, { ...animationSettings, x: x - 600, y: y - 600, z })
+  gsap.to(controls.target, { ...animationSettings, x: x, y: y, z })
 }
 
 export default {
