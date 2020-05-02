@@ -7,10 +7,9 @@ import Marker from './scene/marker'
 import { TileGrid } from './tiles/tile-grid'
 import { TextureBuilder } from './scene/textureBuilder'
 
-
 const getTileMeters = (feature) => {
-  let a = feature.geometry.coordinates[0][2][0]
-  let b = feature.geometry.coordinates[0][0][0]
+  const a = feature.geometry.coordinates[0][2][0]
+  const b = feature.geometry.coordinates[0][0][0]
   return a - b
 }
 
@@ -18,8 +17,8 @@ export class Map {
   constructor (opts) {
     console.log(opts)
     this.element = opts.element
-    this.opts    = opts
-    this.scene   = scene
+    this.opts = opts
+    this.scene = scene
     this.init()
   }
 
@@ -31,22 +30,22 @@ export class Map {
     const bufferUnit = this.opts.bufferUnit || 'miles'
 
     const { tiles, polygons, center } = this.feature
-                                            .bufferBy(bufferSize, bufferUnit)
-                                            .getTiles()
+      .bufferBy(bufferSize, bufferUnit)
+      .getTiles()
 
-    let metersPerTile = getTileMeters(polygons.features[0])
+    const metersPerTile = getTileMeters(polygons.features[0])
 
-    let elevationGrid = new TileGrid({ tiles })
+    const elevationGrid = new TileGrid({ tiles })
 
-    let textureBuilder = new TextureBuilder(elevationGrid, 'terrain')
+    const textureBuilder = new TextureBuilder(elevationGrid, 'terrain')
 
-    let pixelData = await textureBuilder.pixelData()
+    const pixelData = await textureBuilder.pixelData()
 
     const meshConfig = {
       tiles: tiles,
       center: center,
       features: polygons,
-      gridRows:    elevationGrid.shape.rows,
+      gridRows: elevationGrid.shape.rows,
       gridColumns: elevationGrid.shape.columns,
       xResolution: elevationGrid.width,
       yResolutuin: elevationGrid.height,
@@ -65,7 +64,7 @@ export class Map {
 
   drawLine (geojson) {
     const linestring = new Linestring(geojson)
-    this.scene.drawLine(this.feature.path)
+    this.scene.drawLine(linestring.path)
   }
 
   drawMarker (point) {
@@ -87,5 +86,4 @@ export class Map {
       projectedPoint.coordinates[2] + 75
     )
   }
-
 }

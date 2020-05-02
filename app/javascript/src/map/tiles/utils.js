@@ -1,6 +1,6 @@
 const getTileMeters = (feature) => {
-  let a = feature.geometry.coordinates[0][2][0]
-  let b = feature.geometry.coordinates[0][0][0]
+  const a = feature.geometry.coordinates[0][2][0]
+  const b = feature.geometry.coordinates[0][0][0]
   return a - b
 }
 

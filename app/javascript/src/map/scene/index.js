@@ -4,11 +4,8 @@ import {
   PerspectiveCamera,
   WebGLRenderer,
   Vector3,
-  Geometry,
   Mesh,
   MeshBasicMaterial,
-  PlaneBufferGeometry,
-  BufferAttribute,
   CanvasTexture,
   LinearFilter
 } from 'three'
@@ -19,12 +16,10 @@ import geometry from './geometry'
 import { GeoLine } from './geoline'
 import { TextureBuilder } from './textureBuilder'
 import gsap from 'gsap'
-import { chunk, flatten } from 'lodash/array'
-var tilebelt = require('@mapbox/tilebelt')
+import { flatten } from 'lodash/array'
 
 import { TileGrid } from '../tiles/tile-grid'
-
-
+var tilebelt = require('@mapbox/tilebelt')
 
 const configureSun = (center) => {
   const sky = new Sky()
@@ -77,8 +72,8 @@ const width = window ? window.innerWidth : 1000
 const height = window ? window.innerHeight * 0.75 : 1000
 const scene = new Scene()
 const camera = new PerspectiveCamera(75, width / height, 0.1, config.VIEW_RANGE)
-var canvas = document.createElement( 'canvas' )
-var context = canvas.getContext( 'webgl2', { alpha: false } )
+var canvas = document.createElement('canvas')
+var context = canvas.getContext('webgl2', { alpha: false })
 const renderer = new WebGLRenderer({ canvas: canvas, context: context })
 camera.up.set(0, 0, 1)
 const controls = new OrbitControls(camera, renderer.domElement)
@@ -90,14 +85,14 @@ document.addEventListener('turbolinks:before-render', () => {
 })
 
 const initilaize = (element) => {
-  renderer.setPixelRatio( window.devicePixelRatio )
+  renderer.setPixelRatio(window.devicePixelRatio)
   renderer.setSize(width, height)
   if (element) element.appendChild(renderer.domElement)
   controls.update()
 }
 
 const setCameraTarget = (center) => {
-  let vec = new Vector3(center.x,center.y,center.z)
+  const vec = new Vector3(center.x, center.y, center.z)
   configureSun(vec)
 
   controls.target = vec
@@ -110,12 +105,12 @@ const setCameraTarget = (center) => {
 }
 
 const buildMaterial = async (tiles) => {
-  let tileZoom1 = tiles.map(tileInfo => {
-      return tilebelt.getChildren(tileInfo)
+  const tileZoom1 = tiles.map(tileInfo => {
+    return tilebelt.getChildren(tileInfo)
   })
 
-  let textrueGrid = new TileGrid({ tiles: flatten(tileZoom1) })
-  let textureBuilder = new TextureBuilder(textrueGrid)
+  const textrueGrid = new TileGrid({ tiles: flatten(tileZoom1) })
+  const textureBuilder = new TextureBuilder(textrueGrid)
 
   await textureBuilder.process()
   const texture = new CanvasTexture(textureBuilder.canvas)
@@ -169,10 +164,10 @@ const lookAt = ({ x, y, z }) => {
   gsap.to(camera.position, {
     ...animationSettings,
     x,
-    y: (y + 500) ,
+    y: (y + 500),
     z: (z + 1500)
   })
-  gsap.to(controls.target, { ...animationSettings, x: x , y: y , z })
+  gsap.to(controls.target, { ...animationSettings, x: x, y: y, z })
 }
 
 export default {

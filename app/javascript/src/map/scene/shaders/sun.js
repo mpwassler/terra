@@ -32,7 +32,7 @@ var Sky = function (center) {
     uniforms: UniformsUtils.clone(shader.uniforms),
     side: BackSide
   })
-  Mesh.call(this, new BoxBufferGeometry(0.6,0.6,0.6), material)
+  Mesh.call(this, new BoxBufferGeometry(0.6, 0.6, 0.6), material)
 }
 
 Sky.prototype = Object.create(Mesh.prototype)

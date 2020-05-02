@@ -1,17 +1,18 @@
 import { TileGrid } from '../../../src/map/tiles/tile-grid'
+const { test, expect } = global
 
 const tiles = [
-  [6,12,5],
-  [5,12,5],
-  [6,13,5],
-  [5,13,5]
+  [6, 12, 5],
+  [5, 12, 5],
+  [6, 13, 5],
+  [5, 13, 5]
 ]
 
 const sortedTiles = [
-  [5,12,5],
-  [6,12,5],
-  [5,13,5],
-  [6,13,5]
+  [5, 12, 5],
+  [6, 12, 5],
+  [5, 13, 5],
+  [6, 13, 5]
 ]
 
 test('Sorts tiles in order', () => {

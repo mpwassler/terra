@@ -1,5 +1,4 @@
 import config from '../../config'
-import { uniq } from 'lodash/array'
 
 const TOKEN_PARAM = `?access_token=${window.API_TOKEN}`
 
@@ -18,11 +17,10 @@ export class TextureBuilder {
     this.loaded = 0
     this.debug = false
     this.buildCanvas()
-
   }
 
   buildCanvas () {
-    this.canvas = document.createElement("canvas")
+    this.canvas = document.createElement('canvas')
     this.canvas.height = this.grid.shape.rows * this.grid.tileSize
     this.canvas.width = this.grid.shape.columns * this.grid.tileSize
     if (this.debug) document.body.appendChild(this.canvas)
@@ -34,11 +32,11 @@ export class TextureBuilder {
     let y = 0
     let column = 1
     let row = 1
-    let imagePathFunc = this.type === 'terrain' ? terrainTilePath : sataliteTilePath
+    const imagePathFunc = this.type === 'terrain' ? terrainTilePath : sataliteTilePath
     this.grid.tiles.forEach((tile, index) => {
-      let url = imagePathFunc(tile)
-      x = this.grid.tileSize * (column - 1 )
-      y =  this.grid.tileSize * (row - 1)
+      const url = imagePathFunc(tile)
+      x = this.grid.tileSize * (column - 1)
+      y = this.grid.tileSize * (row - 1)
       this.loadAndDrawImage(url, x, y)
       column += 1
       if (column > this.grid.shape.columns) {
@@ -49,12 +47,12 @@ export class TextureBuilder {
   }
 
   loadAndDrawImage (url, x, y) {
-    var image = new Image()
-    image.crossOrigin = "Anonymous"
+    var image = new window.Image()
+    image.crossOrigin = 'Anonymous'
     image.onload = () => {
       this.loaded += 1
       this.context.drawImage(image, x, y, 256, 256)
-      if(this.loaded === this.grid.tiles.length) {
+      if (this.loaded === this.grid.tiles.length) {
         this.imagesLoaded()
       }
     }
@@ -62,7 +60,7 @@ export class TextureBuilder {
   }
 
   imagesLoaded () {
-    var event = new Event('data-loaded')
+    var event = new window.Event('data-loaded')
     this.canvas.dispatchEvent(event)
   }
 
@@ -76,9 +74,9 @@ export class TextureBuilder {
   }
 
   prefetch () {
-    let imagePathFunc = this.type === 'terrain' ? terrainTilePath : sataliteTilePath
+    const imagePathFunc = this.type === 'terrain' ? terrainTilePath : sataliteTilePath
     this.tiles.forEach(tile => {
-      var image = new Image()
+      var image = new window.Image()
       image.src = imagePathFunc(tile)
     })
   }

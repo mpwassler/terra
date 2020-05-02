@@ -5,24 +5,20 @@ import * as turf from '@turf/turf'
 const limits = { min_zoom: 15, max_zoom: 15 }
 
 export class Linestring extends Geography {
-  constructor (geojson) {
-    super(geojson)
-  }
-
   get path () {
     return this.project(this.geojson)
   }
 
   getTiles () {
-    const boundingBox   = turf.bboxPolygon(this.boundingBox)
-    const tileset       = cover.tiles(boundingBox.geometry, limits)
-    const tilePloygons  = cover.geojson(boundingBox.geometry, limits)
-    const center        = turf.center(tilePloygons)
+    const boundingBox = turf.bboxPolygon(this.boundingBox)
+    const tileset = cover.tiles(boundingBox.geometry, limits)
+    const tilePloygons = cover.geojson(boundingBox.geometry, limits)
+    const center = turf.center(tilePloygons)
 
     return {
-      tiles:    tileset,
+      tiles: tileset,
       polygons: this.project(tilePloygons),
-      center:   this.toVector(this.project(center))
+      center: this.toVector(this.project(center))
     }
   }
 }
