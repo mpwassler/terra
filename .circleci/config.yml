@@ -18,5 +18,8 @@ jobs:
           name: Lint
           command: scripts/lint.sh
       - run:
+          name: Jest
+          command: scripts/jest.sh
+      - run:
           name: Rspec
           command: scripts/spec.sh
