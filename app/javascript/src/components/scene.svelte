@@ -27,7 +27,7 @@
 		  map3d = new Map({
 		  	element: container,
 		  	feature: data.path,
-		  	buffer: 2,
+		  	buffer: 3,
 		  	bufferUnit: 'miles',
 		  	resolutionMultiple: 1,
 		  })

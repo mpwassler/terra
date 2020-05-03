@@ -23,6 +23,5 @@ const setup = () => {
   }
 }
 
-document.addEventListener('turbolinks:load', setup)
-// document.addEventListener('turbolinks:render', setup)
-document.addEventListener('turbolinks:before-render', () => {})
+document.addEventListener('DOMContentLoaded', setup)
+
