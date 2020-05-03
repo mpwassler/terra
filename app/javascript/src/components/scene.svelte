@@ -21,23 +21,13 @@
 
 	const setup = () => {
 		  const data = getData()
-		  // map3d = new Map({ element: container})
-		  // map3d.setViewport(data.path)
-		  // data.hike_annotations.forEach(annotation => {
-		  // 	map3d.addMarker(annotation.point)
-		  // })
-		  // if ($selectedAnottation) {
-		  // 	map3d.focusOn($selectedAnottation.point)
-		  // }
-		  // map3d.render()
 
-
-
+		  $slideIndex = 0
 
 		  map3d = new Map({
 		  	element: container,
 		  	feature: data.path,
-		  	buffer: 2.5,
+		  	buffer: 2,
 		  	bufferUnit: 'miles',
 		  	resolutionMultiple: 1,
 		  })
@@ -47,10 +37,11 @@
 		  data.hike_annotations.forEach(annotation => {
 		  	map3d.drawMarker(annotation.point)
 		  })
-
-		  if ($selectedAnottation) {
-		  	map3d.focusOn($selectedAnottation.point)
-		  }
+		  setTimeout(() => {
+			  if ($selectedAnottation) {
+			  	map3d.focusOn($selectedAnottation.point)
+			  }
+		  }, 1000)
 	}
 
 	onMount(() => {

@@ -35,9 +35,9 @@ export class Map {
 
     const metersPerTile = getTileMeters(polygons.features[0])
 
-    const elevationGrid = new TileGrid({ tiles })
+    const elevationGrid = new TileGrid({ tiles, type: 'terrain' })
 
-    const textureBuilder = new TextureBuilder(elevationGrid, 'terrain')
+    const textureBuilder = new TextureBuilder(elevationGrid)
 
     const pixelData = await textureBuilder.pixelData()
 

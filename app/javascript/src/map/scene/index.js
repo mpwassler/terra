@@ -69,7 +69,7 @@ const configureSun = (center) => {
 
 // Initilaize and set up the 3d scene
 const width = window ? window.innerWidth : 1000
-const height = window ? window.innerHeight * 0.75 : 1000
+const height = window ? window.innerHeight : 1000
 const scene = new Scene()
 const camera = new PerspectiveCamera(75, width / height, 0.1, config.VIEW_RANGE)
 var canvas = document.createElement('canvas')

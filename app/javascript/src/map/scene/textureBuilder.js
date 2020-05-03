@@ -11,18 +11,19 @@ const sataliteTilePath = ([x, y, z]) => {
 }
 
 export class TextureBuilder {
-  constructor (tileGrid, type) {
-    this.type = type
+  constructor (tileGrid) {
+    this.type = tileGrid.type
     this.grid = tileGrid
     this.loaded = 0
     this.debug = false
+    this.tileSize = this.grid.type === 'terrain@2x' ? 512 : 256
     this.buildCanvas()
   }
 
   buildCanvas () {
     this.canvas = document.createElement('canvas')
-    this.canvas.height = this.grid.shape.rows * this.grid.tileSize
-    this.canvas.width = this.grid.shape.columns * this.grid.tileSize
+    this.canvas.height = this.grid.shape.rows * this.tileSize
+    this.canvas.width = this.grid.shape.columns * this.tileSize
     if (this.debug) document.body.appendChild(this.canvas)
     this.context = this.canvas.getContext('2d')
   }
@@ -35,8 +36,8 @@ export class TextureBuilder {
     const imagePathFunc = this.type === 'terrain' ? terrainTilePath : sataliteTilePath
     this.grid.tiles.forEach((tile, index) => {
       const url = imagePathFunc(tile)
-      x = this.grid.tileSize * (column - 1)
-      y = this.grid.tileSize * (row - 1)
+      x = this.tileSize * (column - 1)
+      y = this.tileSize * (row - 1)
       this.loadAndDrawImage(url, x, y)
       column += 1
       if (column > this.grid.shape.columns) {
@@ -51,7 +52,7 @@ export class TextureBuilder {
     image.crossOrigin = 'Anonymous'
     image.onload = () => {
       this.loaded += 1
-      this.context.drawImage(image, x, y, 256, 256)
+      this.context.drawImage(image, x, y, this.tileSize, this.tileSize)
       if (this.loaded === this.grid.tiles.length) {
         this.imagesLoaded()
       }

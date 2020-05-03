@@ -3,7 +3,8 @@ import { uniq } from 'lodash/array'
 export class TileGrid {
   constructor (opts) {
     this.tiles = opts.tiles
-    this.tileSize = 256
+    this.type = opts.type
+    this.tileSize = opts.type === 'terrain@2x' ? 512 : 256
     this.rows = uniq(this.tiles.map(([x, y, z]) => y)).length
     this.columns = uniq(this.tiles.map(([x, y, z]) => x)).length
     this.z = this.tiles[0][2]
