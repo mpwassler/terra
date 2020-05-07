@@ -2,8 +2,8 @@
 	import { results } from '../stores/searchStore'
 
 </script>
-{#if $results && $results.length > 0}
-	
+{#if $results}
+
 	{#each $results as result}
 		<div class="box">
 			<div class="card">
@@ -23,4 +23,7 @@
 			</div>
 		</div>
 	{/each}
+	{#if $results.length < 1}
+		<p>No results found for location.</p>
+	{/if}
 {/if}
