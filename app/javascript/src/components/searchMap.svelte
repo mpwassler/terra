@@ -6,7 +6,7 @@ import TileLayer from 'ol/layer/Tile'
 import VectorLayer from 'ol/layer/Vector'
 import { onMount, setContext, createEventDispatcher } from 'svelte'
 import {XYZ} from 'ol/source'
-import { searchPoint, results } from '../stores/searchStore'
+import { searchPoint, results, filteredResults } from '../stores/searchStore'
 import SearchResultsLayer from '../openlayer/layers/searchResultsLayer'
 import * as turf from '@turf/turf'
 import { debounce } from 'lodash/function'
@@ -27,7 +27,8 @@ searchPoint.subscribe(value => {
 	}
 })
 
-results.subscribe(results => {
+filteredResults.subscribe(results => {
+	searchLayer.source.clear()
 	searchLayer.addFeatures(results.map(result => result.path))
 })
 

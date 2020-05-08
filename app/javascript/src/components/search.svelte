@@ -7,7 +7,6 @@
 	import { results, resultsRequest, searchPoint, filters } from '../stores/searchStore'
 
 	const updateSearch = async ({ detail: { value: point }}) => {
-
 		$searchPoint = point.coordinates
 		$results = await findFeatures({ point })
 	}
