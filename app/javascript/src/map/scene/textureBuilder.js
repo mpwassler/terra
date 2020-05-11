@@ -1,4 +1,5 @@
 import config from '../../config'
+import { EventEmitter } from '../events'
 
 const TOKEN_PARAM = `?access_token=${window.API_TOKEN}`
 
@@ -10,8 +11,9 @@ const sataliteTilePath = ([x, y, z]) => {
   return `${config.SATALITE_BASE_URL}/${z}/${x}/${y}@2x.png${TOKEN_PARAM}`
 }
 
-export class TextureBuilder {
+export class TextureBuilder extends EventEmitter {
   constructor (tileGrid) {
+    super()
     this.type = tileGrid.type
     this.grid = tileGrid
     this.loaded = 0
@@ -53,8 +55,12 @@ export class TextureBuilder {
     image.onload = () => {
       this.loaded += 1
       this.context.drawImage(image, x, y, this.tileSize, this.tileSize)
+      this.emit('image-loaded', {
+        count: this.loaded,
+        total: this.grid.tiles.length
+      })
       if (this.loaded === this.grid.tiles.length) {
-        this.imagesLoaded()
+        this.emit('all-data-loaded')
       }
     }
     image.src = url
@@ -68,7 +74,7 @@ export class TextureBuilder {
   process () {
     this.layoutTiles()
     return new Promise((resolve, reject) => {
-      this.canvas.addEventListener('data-loaded', () => {
+      this.on('all-data-loaded', () => {
         resolve(this)
       })
     })

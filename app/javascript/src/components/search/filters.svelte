@@ -20,10 +20,10 @@
   <div class="dropdown-menu" id="dropdown-menu7" role="menu">
     <div class="dropdown-content">
       <div class="dropdown-item">
-        <Slider bind:value={$filters.minDistance}  title="Min Distance"       min={0} max={20000} />
-        <Slider bind:value={$filters.maxDistance}  title="Max Distance"       min={0} max={20000} />
-        <Slider bind:value={$filters.minElevation} title="Min Elevation Gain" min={0} max={10000} />
-        <Slider bind:value={$filters.maxElevation} title="Max Elevation Gain" min={0} max={10000} />
+        <Slider bind:value={$filters.minDistance}  title="Min Distance"       min={0} max={40000} />
+        <Slider bind:value={$filters.maxDistance}  title="Max Distance"       min={0} max={40000} />
+        <Slider bind:value={$filters.minElevation} title="Min Elevation Gain" min={0} max={15000} />
+        <Slider bind:value={$filters.maxElevation} title="Max Elevation Gain" min={0} max={15000} />
         <button on:click={(e) => isOpen = false} class="button">Apply</button>
       </div>
     </div>

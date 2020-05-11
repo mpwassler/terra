@@ -6,6 +6,8 @@ import Marker from './scene/marker'
 
 import { TileGrid } from './tiles/tile-grid'
 import { TextureBuilder } from './scene/textureBuilder'
+import { buildMaterial } from './scene/material'
+import { EventEmitter } from './events'
 
 const getTileMeters = (feature) => {
   const a = feature.geometry.coordinates[0][2][0]
@@ -13,17 +15,37 @@ const getTileMeters = (feature) => {
   return a - b
 }
 
-export class Map {
+export class Map extends EventEmitter {
   constructor (opts) {
-    console.log(opts)
+    super()
     this.element = opts.element
     this.opts = opts
     this.scene = scene
+    this.startLoading()
+    this.on('load', () => {
+      this.stopLoading()
+    })
     this.init()
+  }
+
+  startLoading () {
+    this.element.style.position = "relative"
+    var div = document.createElement('div')
+    div.classList.add("loading")
+    div.innerHTML = `
+      <progress class="progress is-small is-primary" max="100">15%</progress>
+    `.trim()
+    this.loader = div
+    this.element.appendChild(div)
+  }
+  stopLoading () {
+    this.loader.remove()
   }
 
   async init () {
     this.feature = new Linestring(this.opts.feature)
+
+    this.scene.initilaize(this.element)
 
     const bufferSize = this.opts.buffer || 2.5
 
@@ -33,13 +55,17 @@ export class Map {
       .bufferBy(bufferSize, bufferUnit)
       .getTiles()
 
+    this.scene.setCameraTarget(center)
+
+    this.scene.start()
+
     const metersPerTile = getTileMeters(polygons.features[0])
 
     const elevationGrid = new TileGrid({ tiles, type: 'terrain' })
 
     const textureBuilder = new TextureBuilder(elevationGrid)
 
-    const pixelData = await textureBuilder.pixelData()
+    const [material, pixelData] = await Promise.all([buildMaterial(tiles), textureBuilder.pixelData()])
 
     const meshConfig = {
       tiles: tiles,
@@ -50,16 +76,14 @@ export class Map {
       xResolution: elevationGrid.width,
       yResolutuin: elevationGrid.height,
       metersPerTile,
-      pixelData
+      pixelData,
+      material
     }
 
-    this.scene.initilaize(this.element)
+    this.scene.setMesh(meshConfig, () => {
+      this.emit('load')
+    })
 
-    this.scene.setCameraTarget(center)
-
-    this.scene.setMesh(meshConfig)
-
-    this.scene.start()
   }
 
   drawLine (geojson) {

@@ -3,9 +3,9 @@ import { writable, derived } from 'svelte/store'
 export const results = writable([])
 
 export const filters = writable({
-  maxDistance: 20000,
+  maxDistance: 40000,
   minDistance: 0,
-  maxElevation: 10000,
+  maxElevation: 15000,
   minElevation: 0,
 })
 
