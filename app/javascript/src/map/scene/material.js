@@ -1,9 +1,4 @@
 import {
-  Scene,
-  PerspectiveCamera,
-  WebGLRenderer,
-  Vector3,
-  Mesh,
   MeshBasicMaterial,
   CanvasTexture,
   LinearFilter

@@ -1,14 +1,5 @@
 
-import {
-  Scene,
-  PerspectiveCamera,
-  WebGLRenderer,
-  Vector3,
-  Mesh,
-  MeshBasicMaterial,
-  CanvasTexture,
-  LinearFilter
-} from 'three'
+import { Vector3 } from 'three'
 import { Sky } from './shaders/sun.js'
 
 const makeSky = (center) => {

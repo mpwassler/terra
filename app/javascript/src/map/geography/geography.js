@@ -33,7 +33,6 @@ export class Geography {
   }
 
   bufferBy (distance, units) {
-    const originalCenter = turf.center(this.geojson)
     const buffered = turf.buffer(this.polygon, distance, { units })
     this.boundingBox = turf.bbox(buffered)
     return this

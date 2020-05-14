@@ -29,15 +29,16 @@ export class Map extends EventEmitter {
   }
 
   startLoading () {
-    this.element.style.position = "relative"
+    this.element.style.position = 'relative'
     var div = document.createElement('div')
-    div.classList.add("loading")
+    div.classList.add('loading')
     div.innerHTML = `
       <progress class="progress is-small is-primary" max="100">15%</progress>
     `.trim()
     this.loader = div
     this.element.appendChild(div)
   }
+
   stopLoading () {
     this.loader.remove()
   }
@@ -83,7 +84,6 @@ export class Map extends EventEmitter {
     this.scene.setMesh(meshConfig, () => {
       this.emit('load')
     })
-
   }
 
   drawLine (geojson) {

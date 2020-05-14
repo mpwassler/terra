@@ -4,18 +4,13 @@ import {
   PerspectiveCamera,
   WebGLRenderer,
   Vector3,
-  Mesh,
-  MeshBasicMaterial,
-  CanvasTexture,
-  LinearFilter
+  Mesh
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { Sky } from './shaders/sun.js'
 import config from '../../config'
 import geometry from './geometry'
 import { GeoLine } from './geoline'
 import { makeSky } from './sky'
-import { buildMaterial } from './material'
 import gsap from 'gsap'
 
 // Initilaize and set up the 3d scene
