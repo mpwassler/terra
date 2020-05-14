@@ -48,8 +48,8 @@ class HikesController < ApplicationController
   def update
     authorize @hike
     respond_to do |format|
-      if @hike.update(hike_params)
-        format.html { redirect_to @hike, notice: 'Hike was successfully updated.' }
+      if @hike.update(hike_edit_params)
+        format.html { redirect_to edit_hike_path(@hike), notice: 'Hike was successfully updated.' }
         format.json { render :show, status: :ok, location: @hike }
       else
         format.html { render :edit }
@@ -84,6 +84,10 @@ class HikesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def hike_params
       params.require(:hike).permit(:name, :path_file)
+    end
+
+    def hike_edit_params
+      params.require(:hike).permit(:name, :cover_image)
     end
 
     def hike_scope

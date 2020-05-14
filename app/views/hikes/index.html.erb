@@ -1,27 +1,27 @@
-
-<h1>Hikes</h1>
-<div class="box">
-  <table class="table is-fullwidth">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Distance</th>
-        <th>Vertical gain</th>
-        <th colspan="3"></th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% @hikes.each do |hike| %>
+<div class="section">
+  <h1>Hikes</h1>
+  <div class="box">
+    <table class="table is-fullwidth">
+      <thead>
         <tr>
-          <td><%= hike.name %></td>
-          <td><%= hike.distance %></td>
-          <td><%= hike.vertical_gain %></td>
-          <td><%= link_to 'Show', hike, class: 'button' %></td>
-          <td><%= link_to 'Edit', edit_hike_path(hike), class: 'button' %></td>
-          <td><%= link_to 'Destroy', hike, method: :delete, data: { confirm: 'Are you sure?' }, class: 'button' %></td>
+          <th>Name</th>
+          <th>Distance</th>
+          <th>Vertical gain</th>
+          <th colspan="3"></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @hikes.each do |hike| %>
+          <tr>
+            <td><%= hike.name %></td>
+            <td><%= hike.distance %></td>
+            <td><%= hike.vertical_gain %></td>
+            <td><%= link_to 'Show', hike, class: 'button' %></td>
+            <td><%= link_to 'Edit', edit_hike_path(hike), class: 'button' %></td>
+            <td><%= link_to 'Destroy', hike, method: :delete, data: { confirm: 'Are you sure?' }, class: 'button' %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>
