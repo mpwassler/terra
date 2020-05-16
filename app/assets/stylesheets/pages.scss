@@ -1,0 +1,27 @@
+// Place all the styles related to the Pages controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+.home {
+  min-height: 100vh;
+  background-image: url('/media/shared/mapline_bg.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: #fff;
+}
+
+.demo {
+  width: 75%;
+  margin: 0 auto;
+}
+
+.hero {
+  margin: 2rem 0;
+}
+
+img {
+  min-width: 100%;
+}
+
+.explore {
+  min-height: 400px;
+}
