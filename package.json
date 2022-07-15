@@ -17,7 +17,7 @@
     "lodash": "^4.17.15",
     "ol": "^6.2.1",
     "standard": "^14.3.1",
-    "svelte": "^3.20.1",
+    "svelte": "^3.49.0",
     "svelte-autocomplete": "^0.0.4",
     "svelte-loader": "^2.13.6",
     "three": "^0.113.2",
